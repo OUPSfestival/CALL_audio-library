@@ -131,6 +131,11 @@ html,body{
 <!-- 🔴 RECORD BUTTON -->
 <div id="recordBtn"></div>
 
+
+  <!-- FLOATING IMAGES -->
+<img src="images/call1.png" class="floating-img" id="img1" alt="">
+<img src="images/call2.png" class="floating-img" id="img2" alt="">
+
 <!-- TOP -->
 <div class="top">
   <div class="marquee">
@@ -141,40 +146,42 @@ Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns. Über CALL BACK 
 <!-- CENTER -->
 <div class="wrap">
 
-  <div class="action">
+  <!-- SEND CALL -->
+  <div class="action" onclick="document.getElementById('file-input').click()">
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="sendPath" d="M 20 40 Q 200 240 380 40" />
       </defs>
 
       <text class="arc-big">
-        <textPath href="#sendPath" startOffset="50%">
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
           SEND CALL
         </textPath>
       </text>
 
       <text class="arc-small">
-        <textPath href="#sendPath" startOffset="50%">
-          Schicke deinen Ruf in die digitalen Täler
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+          Schicke deinen Ruf in die digitalen Täler,
         </textPath>
       </text>
     </svg>
   </div>
 
-  <div class="action">
+  <!-- CALL BACK -->
+  <div class="action" id="play-action" onclick="togglePlay()">
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="backPath" d="M 20 240 Q 200 20 380 240" />
       </defs>
 
       <text class="arc-big">
-        <textPath href="#backPath" startOffset="50%">
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
           CALL BACK
         </textPath>
       </text>
 
       <text class="arc-small">
-        <textPath href="#backPath" startOffset="50%">
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
           nun Höre dein Echo
         </textPath>
       </text>
