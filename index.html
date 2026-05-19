@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +8,12 @@
 <title>Haltestellen schreierei</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='r' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff4a4a' stop-opacity='1'/%3E%3Cstop offset='40%25' stop-color='%23ff2f2f' stop-opacity='0.95'/%3E%3Cstop offset='75%25' stop-color='%23c81f1f' stop-opacity='0.7'/%3E%3Cstop offset='100%25' stop-color='%23a01414' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='35' fill='url(%23r)'/%3E%3C/svg%3E">
 
+
 <style>
+
+/* ---------------- RESET ---------------- */
 
 *{
   margin:0;
@@ -18,16 +21,16 @@
   box-sizing:border-box;
 }
 
-html,body{
+html, body{
   width:100%;
-  min-height:100%;
+  height:100%;
   background:#2e5988;
   color:#111;
   font-family:'Inter',sans-serif;
   overflow-x:hidden;
 }
 
-/* ---------------- TOP MARQUEE ---------------- */
+/* ---------------- MARQUEE ---------------- */
 
 .top{
   position:fixed;
@@ -36,6 +39,7 @@ html,body{
   width:100%;
   overflow:hidden;
   padding:18px 0;
+  z-index:5;
 }
 
 .marquee{
@@ -63,13 +67,16 @@ html,body{
 .wrap{
   min-height:100vh;
   min-height:100dvh;
+
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
+
   gap:30px;
   text-align:center;
-  padding:80px 20px;
+
+  padding:140px 20px 120px;
 }
 
 /* ---------------- ACTION ---------------- */
@@ -87,12 +94,12 @@ html,body{
   opacity:.75;
 }
 
-/* ---------------- ARC TYPO ---------------- */
+/* ---------------- ARC TEXT ---------------- */
 
 .arc-text{
   width:680px;
   max-width:100%;
-  height:300px;
+  height:auto;
   display:block;
 }
 
@@ -119,13 +126,18 @@ html,body{
   bottom:0;
   left:0;
   width:100%;
-  padding:22px 28px;
+
+  padding:18px 20px;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   font-size:11px;
   letter-spacing:.12em;
   text-transform:uppercase;
+
+  z-index:10;
 }
 
 .bottom-center{
@@ -138,6 +150,8 @@ html,body{
   margin-left:auto;
   text-align:right;
 }
+
+/* ---------------- LINKS ---------------- */
 
 a{
   text-decoration:none;
@@ -156,12 +170,11 @@ a{
 
   .wrap{
     gap:20px;
-    padding:70px 16px;
+    padding:120px 16px 100px;
   }
 
   .arc-text{
     width:320px;
-    height:170px;
   }
 
   .arc-big{
@@ -174,11 +187,6 @@ a{
 
   .marquee{
     font-size:14px;
-  }
-
-  .bottom{
-    padding:16px 14px;
-    font-size:10px;
   }
 }
 
@@ -197,7 +205,9 @@ a{
 <!-- CENTER -->
 <div class="wrap">
 
+  <!-- SEND CALL -->
   <div class="action" onclick="document.getElementById('file-input').click()">
+
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="sendPath" d="M 20 40 Q 200 240 380 40" />
@@ -215,9 +225,12 @@ a{
         </textPath>
       </text>
     </svg>
+
   </div>
 
+  <!-- CALL BACK -->
   <div class="action" id="play-action" onclick="togglePlay()">
+
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="backPath" d="M 20 240 Q 200 20 380 240" />
@@ -235,11 +248,12 @@ a{
         </textPath>
       </text>
     </svg>
+
   </div>
 
 </div>
 
-<!-- BOTTOM -->
+<!-- BOTTOM BAR -->
 <div class="bottom">
 
   <div>
@@ -260,10 +274,114 @@ a{
 
 </div>
 
+<!-- FILE INPUT -->
 <input type="file" id="file-input" accept="audio/*" multiple />
 
 <script>
-// (your JS unchanged)
+
+/* ---------------- AUDIO SYSTEM ---------------- */
+
+const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev/";
+const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
+
+let trackList = [];
+let currentAudio = null;
+let isPlaying = false;
+let interval;
+
+const fileInput = document.getElementById("file-input");
+
+async function load(){
+  try{
+    const res = await fetch(`${WORKER_URL}/list`);
+    if(!res.ok) return;
+
+    const data = await res.json();
+
+    trackList = data.files.map(n => ({
+      name:n,
+      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(n)}`
+    }));
+
+  }catch(e){}
+}
+
+load();
+
+fileInput.addEventListener("change", () => {
+  [...fileInput.files].forEach(upload);
+  fileInput.value = "";
+});
+
+async function upload(file){
+  await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
+    method:"PUT",
+    body:file
+  });
+
+  trackList.push({
+    name:file.name,
+    url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
+  });
+}
+
+function togglePlay(){
+  isPlaying ? stop() : play();
+}
+
+function play(){
+
+  if(!trackList.length) return;
+
+  stop();
+
+  const track = trackList[Math.floor(Math.random()*trackList.length)];
+  const audio = new Audio(track.url);
+
+  currentAudio = audio;
+
+  audio.addEventListener("loadedmetadata", () => {
+
+    const start = Math.random() * Math.max(0, audio.duration - 30);
+
+    audio.currentTime = start;
+    audio.play();
+
+    isPlaying = true;
+
+    interval = setInterval(() => {
+      if(audio.currentTime - start >= 30) stop();
+    }, 500);
+
+  });
+
+  audio.addEventListener("ended", stop);
+}
+
+function stop(){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  clearInterval(interval);
+  isPlaying = false;
+}
+
+/* ---------------- MARQUEE PAUSE ---------------- */
+
+const marquee = document.querySelector(".marquee");
+
+if(marquee){
+
+  marquee.addEventListener("mousedown", () => marquee.classList.add("paused"));
+  marquee.addEventListener("mouseup", () => marquee.classList.remove("paused"));
+  marquee.addEventListener("mouseleave", () => marquee.classList.remove("paused"));
+
+  marquee.addEventListener("touchstart", () => marquee.classList.add("paused"), { passive:true });
+  marquee.addEventListener("touchend", () => marquee.classList.remove("paused"));
+
+}
+
 </script>
 
 </body>
