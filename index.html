@@ -28,7 +28,7 @@ html,body{
   overflow:hidden;
 }
 
-/* ---------------- TOP MARQUEE (moved from bottom) ---------------- */
+/* ---------------- TOP MARQUEE ---------------- */
 
 .top{
   position:fixed;
@@ -42,13 +42,11 @@ html,body{
 .marquee{
   display:inline-block;
   white-space:nowrap;
-
   font-size:20px;
   letter-spacing:.06em;
   text-transform:uppercase;
 
   padding-left:100%;
-
   animation:scroll 110s linear infinite;
   opacity:.8;
 }
@@ -58,10 +56,8 @@ html,body{
   100%{ transform:translateX(-100%); }
 }
 
-/* paused state */
 .paused{
   animation-play-state:paused !important;
-
 }
 
 /* ---------------- CENTER ---------------- */
@@ -81,6 +77,7 @@ html,body{
   cursor:pointer;
   display:flex;
   flex-direction:column;
+  align-items:center;
   gap:14px;
   transition:.25s ease;
 }
@@ -90,13 +87,22 @@ html,body{
   opacity:.7;
 }
 
-.title{
-  font-size:72px;
-  line-height:1;
-  letter-spacing:-0.05em;
-  text-transform:uppercase;
-  font-weight:600;
+/* ---------------- ARC TYPO ---------------- */
+
+.arc-text{
+  width:420px;
+  height:180px;
+  display:block;
 }
+
+.arc{
+  font-size:42px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  fill:#111;
+}
+
+/* ---------------- SUB ---------------- */
 
 .sub{
   font-size:12px;
@@ -105,7 +111,7 @@ html,body{
   opacity:.55;
 }
 
-/* ---------------- BOTTOM BAR (moved from topbar) ---------------- */
+/* ---------------- BOTTOM BAR ---------------- */
 
 .bottom{
   position:fixed;
@@ -136,24 +142,16 @@ html,body{
   display:none;
 }
 
-/* ---------------- arc ---------------- */
-  .arc-text{
-  width:420px;
-  height:180px;
-}
-
-.arc{
-  font-size:42px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  fill:#111;
-}
-
 /* ---------------- MOBILE ---------------- */
 
 @media(max-width:700px){
-  .title{
-    font-size:44px;
+  .arc-text{
+    width:320px;
+    height:140px;
+  }
+
+  .arc{
+    font-size:34px;
   }
 }
 
@@ -162,7 +160,7 @@ html,body{
 
 <body>
 
-<!-- TOP (was bottom marquee) -->
+<!-- TOP MARQUEE -->
 <div class="top">
   <div class="marquee">
     An open audio archive for collective field recordings — each upload becomes part of a drifting sonic memory system — a continuous listening space between voices, places and time —
@@ -172,19 +170,47 @@ html,body{
 <!-- CENTER -->
 <div class="wrap">
 
+  <!-- SEND CALL (CONCAVE) -->
   <div class="action" onclick="document.getElementById('file-input').click()">
-    <div class="title">SEND CALL</div>
+
+    <svg viewBox="0 0 400 200" class="arc-text">
+      <defs>
+        <path id="sendPath"
+          d="M 20 160 Q 200 20 380 160" />
+      </defs>
+
+      <text class="arc">
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+          SEND CALL
+        </textPath>
+      </text>
+    </svg>
+
     <div class="sub">hochladen deines rufs</div>
   </div>
 
+  <!-- CALL BACK (CONVEX) -->
   <div class="action" id="play-action" onclick="togglePlay()">
-    <div class="title">CALL BACK</div>
+
+    <svg viewBox="0 0 400 200" class="arc-text">
+      <defs>
+        <path id="backPath"
+          d="M 20 40 Q 200 180 380 40" />
+      </defs>
+
+      <text class="arc">
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+          CALL BACK
+        </textPath>
+      </text>
+    </svg>
+
     <div class="sub">horche dein echo</div>
   </div>
 
 </div>
 
-<!-- BOTTOM (was topbar) -->
+<!-- BOTTOM BAR -->
 <div class="bottom">
 
   <div>MANUEL PHIL. BISCHOF</div>
@@ -287,7 +313,6 @@ function play(){
   });
 
   audio.addEventListener("ended", stop);
-
 }
 
 function stop(){
@@ -298,23 +323,6 @@ function stop(){
   clearInterval(interval);
   isPlaying = false;
 }
-
-  const marquee = document.querySelector(".marquee");
-
-function pause(){
-  marquee.classList.add("paused");
-}
-
-function resume(){
-  marquee.classList.remove("paused");
-}
-
-marquee.addEventListener("mousedown", pause);
-marquee.addEventListener("mouseup", resume);
-marquee.addEventListener("mouseleave", resume);
-
-marquee.addEventListener("touchstart", pause);
-marquee.addEventListener("touchend", resume);
 
 </script>
 
