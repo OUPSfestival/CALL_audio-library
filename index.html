@@ -30,11 +30,12 @@ html,body{
   position:fixed;
   top:0;
   width:100%;
-  padding:22px 28px;
   text-align:center;
+  padding:22px;
   font-size:11px;
-  letter-spacing:.12em;
+  letter-spacing:.14em;
   text-transform:uppercase;
+  opacity:.7;
 }
 
 /* ---------------- BOTTOM ---------------- */
@@ -43,9 +44,8 @@ html,body{
   position:fixed;
   bottom:0;
   width:100%;
-  padding:22px 28px;
-  display:flex;
-  justify-content:center;
+  text-align:center;
+  padding:22px;
   font-size:11px;
   letter-spacing:.08em;
   text-transform:uppercase;
@@ -57,80 +57,59 @@ html,body{
   border-bottom:1px solid rgba(0,0,0,.3);
 }
 
-/* ---------------- GRID ---------------- */
+/* ---------------- CENTER LAYOUT ---------------- */
 
-.wrapper{
+.wrap{
   min-height:100vh;
-  display:grid;
-  grid-template-columns:repeat(12,1fr);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
   align-items:center;
-  padding:120px 40px;
+  gap:90px;
+  text-align:center;
+  padding:120px 20px;
 }
 
-/* LEFT ACTION */
+/* ---------------- ACTION BLOCKS ---------------- */
 
-.left{
-  grid-column:2 / 6;
+.action{
+  cursor:pointer;
   display:flex;
   flex-direction:column;
-  gap:10px;
-  cursor:pointer;
-}
-
-.right{
-  grid-column:8 / 12;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  cursor:pointer;
-}
-
-.label{
-  font-size:11px;
-  opacity:.4;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-}
-
-.title{
-  font-size:42px;
-  line-height:1;
-  letter-spacing:-0.04em;
-  text-transform:uppercase;
-}
-
-.sub{
-  font-size:12px;
-  opacity:.6;
-}
-
-/* hover minimal */
-
-.left:hover,
-.right:hover{
-  opacity:.7;
-  transform:translateY(-2px);
+  gap:14px;
   transition:.2s ease;
 }
 
-/* PLAY STATE */
+.action:hover{
+  transform:translateY(-3px);
+  opacity:.7;
+}
 
-.playing{
-  opacity:.6;
+/* BIG TYPO */
+
+.title{
+  font-size:72px;
+  line-height:1;
+  letter-spacing:-0.05em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+/* SMALL LINE */
+
+.sub{
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.55;
 }
 
 /* MOBILE */
 
-@media(max-width:900px){
+@media(max-width:700px){
 
-  .wrapper{
-    grid-template-columns:1fr;
-    gap:80px;
-    padding:140px 20px;
-  }
-
-  .left,.right{
-    grid-column:auto;
+  .title{
+    font-size:44px;
   }
 
 }
@@ -145,38 +124,24 @@ html,body{
   FÜR HALTESTELLENSCHWÄRMEREI
 </div>
 
-<!-- GRID -->
-<div class="wrapper">
+<!-- CENTER -->
+<div class="wrap">
 
-  <!-- UPLOAD -->
-  <div class="left" onclick="document.getElementById('file-input').click()">
+  <!-- SEND -->
+  <div class="action" onclick="document.getElementById('file-input').click()">
 
-    <div class="label">01 / Upload / Hochladen</div>
+    <div class="title">SEND CALL</div>
 
-    <div class="title">
-      Send Call<br>
-      Call Senden
-    </div>
-
-    <div class="sub">
-      Upload audio / Audio hochladen
-    </div>
+    <div class="sub">hochladen deines rufs</div>
 
   </div>
 
   <!-- PLAY -->
-  <div class="right" id="play-action" onclick="togglePlay()">
+  <div class="action" id="play-action" onclick="togglePlay()">
 
-    <div class="label">02 / Playback / Wiedergabe</div>
+    <div class="title">CALL BACK</div>
 
-    <div class="title">
-      Call Playback<br>
-      Call Wiedergabe
-    </div>
-
-    <div class="sub">
-      Random playback / Zufällige Wiedergabe
-    </div>
+    <div class="sub">horche dein echo</div>
 
   </div>
 
@@ -187,10 +152,10 @@ html,body{
   <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank">
     MANUEL PHIL. BISCHOF
   </a>
-  &nbsp;— 2026
+  — 2026
 </div>
 
-<!-- FILE -->
+<!-- FILE INPUT -->
 <input type="file" id="file-input" accept="audio/*" multiple />
 
 <script>
@@ -212,7 +177,9 @@ const fileInput = document.getElementById("file-input");
 const playAction = document.getElementById("play-action");
 
 async function load(){
+
   try{
+
     const res = await fetch(`${WORKER_URL}/list`);
     if(!res.ok) return;
 
@@ -224,6 +191,7 @@ async function load(){
     }));
 
   }catch(e){}
+
 }
 
 load();
@@ -235,17 +203,15 @@ fileInput.addEventListener("change", () => {
 
 async function upload(file){
 
-  const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
+  await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
     method:"PUT",
     body:file
   });
 
-  if(res.ok){
-    trackList.push({
-      name:file.name,
-      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
-    });
-  }
+  trackList.push({
+    name:file.name,
+    url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
+  });
 
 }
 
@@ -261,6 +227,7 @@ function play(){
 
   const track = trackList[Math.floor(Math.random()*trackList.length)];
   const audio = new Audio(track.url);
+
   currentAudio = audio;
 
   audio.addEventListener("loadedmetadata", () => {
@@ -271,7 +238,6 @@ function play(){
     audio.play();
 
     isPlaying = true;
-    playAction.classList.add("playing");
 
     interval = setInterval(() => {
       if(audio.currentTime - start >= 30) stop();
@@ -292,7 +258,6 @@ function stop(){
 
   clearInterval(interval);
   isPlaying = false;
-  playAction.classList.remove("playing");
 
 }
 
