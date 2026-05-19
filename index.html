@@ -1,14 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Haltestellenschwärmerei</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='60%25'%3E%3Cstop offset='0%25' stop-color='%23ff6b6b'/%3E%3Cstop offset='100%25' stop-color='%23a01414'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cellipse cx='50' cy='50' rx='42' ry='26' fill='url(%23g)'/%3E%3C/svg%3E">
-
+  
 <style>
 
 *{
@@ -17,20 +16,20 @@
   box-sizing:border-box;
 }
 
-html, body{
-  width:100%;
-  margin:0;
-  padding:0;
-  background:#2e5988;
-  color:#111;
-  font-family:'Inter',sans-serif;
+.wrap{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:30px;
+  text-align:center;
 
-  overflow-x:hidden;
-  overflow-y:auto;
-  scroll-behavior:smooth;
+  padding:140px 20px 60px;
 }
 
-/* TOP */
+/* ---------------- TOP MARQUEE ---------------- */
+
 .top{
   position:fixed;
   top:0;
@@ -53,22 +52,21 @@ html, body{
   100%{transform:translateX(-100%);}
 }
 
-/* MAIN */
-.wrap{
-  min-height:100vh;
+/* ---------------- CENTER ---------------- */
 
+.wrap{
+  min-height:auto;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-
   gap:30px;
   text-align:center;
-
-  padding:140px 20px 60px;
+  padding:120px 20px;
 }
 
-/* ACTION */
+/* ---------------- ACTION ---------------- */
+
 .action{
   cursor:pointer;
   transition:.25s ease;
@@ -78,7 +76,8 @@ html, body{
   opacity:.75;
 }
 
-/* ARC */
+/* ---------------- ARC ---------------- */
+
 .arc-text{
   width:580px;
   max-width:100%;
@@ -97,35 +96,39 @@ html, body{
   opacity:.8;
 }
 
-/* SCROLL IMAGES */
+/* ---------------- SCROLL SECTION ---------------- */
+
 .scroll-section{
   width:100%;
-  padding:80px 0;
+  padding-top:80px;
+  padding-bottom:80px;
 }
 
 .bottom-images{
   width:100%;
 }
 
-.bottom-images img{
-  width:100%;
-  display:block;
+.bottom-images img {
+  width: 100%;
+  height: auto;
+  display: block;
 
-  opacity:0;
-  transform:translateY(80px);
-  filter:blur(8px);
+  opacity: 0;
+  transform: translateY(80px);
+  filter: blur(8px);
 
-  transition:1.2s ease;
-  will-change:transform,opacity,filter;
+  transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
+  will-change: transform, opacity, filter;
 }
 
-.bottom-images img.show{
-  opacity:1;
-  transform:translateY(0);
-  filter:blur(0);
+.bottom-images img.show {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
-/* BOTTOM */
+/* ---------------- BOTTOM BAR ---------------- */
+
 .bottom{
   position:fixed;
   bottom:0;
@@ -137,7 +140,8 @@ html, body{
   font-size:11px;
 }
 
-/* RECORD */
+/* ---------------- RECORD BUTTON ---------------- */
+
 #recordBtn{
   position:fixed;
   top:18px;
@@ -149,6 +153,7 @@ html, body{
   z-index:9999;
   cursor:pointer;
   box-shadow:0 0 10px rgba(255,0,0,0.6);
+  transition: transform 0.2s;
 }
 
 #recordBtn.recording{
@@ -156,7 +161,8 @@ html, body{
   transform:scale(1.2);
 }
 
-/* TOAST */
+/* ---------------- TOAST ---------------- */
+
 #toast{
   position:fixed;
   bottom:60px;
@@ -164,14 +170,17 @@ html, body{
   transform:translateX(-50%) translateY(20px);
   background:#111;
   color:#bfbb99;
+  font-family:'Inter',sans-serif;
   font-size:12px;
   font-weight:600;
   letter-spacing:0.15em;
   text-transform:uppercase;
   padding:12px 28px;
   opacity:0;
-  transition:0.3s;
+  transition:opacity 0.3s, transform 0.3s;
   pointer-events:none;
+  white-space:nowrap;
+  z-index:9999;
 }
 
 #toast.show{
@@ -179,174 +188,433 @@ html, body{
   transform:translateX(-50%) translateY(0);
 }
 
-/* PLAY STATE */
+/* ---------------- PLAY STATE ---------------- */
+
+#callBackAction .stop-hint{
+  display:none;
+  font-size:13px;
+  fill:#bfbb99;
+  opacity:0.7;
+}
+
 #callBackAction.playing .arc-big{
   fill:#bfbb99;
 }
+  /* global styles at bottom */
+body{
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 
 </style>
 </head>
 
 <body>
 
-<div id="recordBtn"></div>
+<!-- 🔴 RECORD BUTTON -->
+<div id="recordBtn" title="Click to record"></div>
 
+  
+
+<!-- TOP MARQUEE -->
 <div class="top">
   <div class="marquee">
     Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns. Über CALL BACK hörst du ein Echo.
   </div>
 </div>
 
+<!-- CENTER -->
 <div class="wrap">
 
+  <!-- SEND CALL — file upload -->
   <div class="action" onclick="document.getElementById('file-input').click()">
     <svg viewBox="0 0 400 260" class="arc-text">
-      <path id="sendPath" d="M 20 40 Q 200 240 380 40"/>
+      <defs>
+        <path id="sendPath" d="M 20 40 Q 200 240 380 40" />
+      </defs>
       <text class="arc-big">
-        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">SEND CALL</textPath>
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+          SEND CALL
+        </textPath>
       </text>
       <text class="arc-small">
-        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">Schicke deinen Ruf in die digitalen Täler</textPath>
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+          Schicke deinen Ruf in die digitalen Täler
+        </textPath>
       </text>
     </svg>
   </div>
 
+  <!-- CALL BACK — play random clip -->
   <div class="action" id="callBackAction" onclick="togglePlay()">
     <svg viewBox="0 0 400 260" class="arc-text">
-      <path id="backPath" d="M 20 240 Q 200 20 380 240"/>
+      <defs>
+        <path id="backPath" d="M 20 240 Q 200 20 380 240" />
+      </defs>
       <text class="arc-big">
-        <textPath href="#backPath" startOffset="50%" text-anchor="middle">CALL BACK</textPath>
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+          CALL BACK
+        </textPath>
       </text>
       <text class="arc-small">
-        <textPath href="#backPath" startOffset="50%" text-anchor="middle">nun höre dein Echo</textPath>
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+          nun höre dein Echo
+        </textPath>
       </text>
     </svg>
   </div>
 
 </div>
 
+<!-- SCROLL IMAGES -->
 <div class="scroll-section">
   <div class="bottom-images">
-    <img src="images/call1.png">
-    <img src="images/call2.png">
+    <img src="images/call1.png" alt="">
+    <img src="images/call2.png" alt="">
   </div>
 </div>
 
+<!-- BOTTOM BAR -->
 <div class="bottom">
   <div>MANUEL PHIL. BISCHOF</div>
   <div>FÜR HALTESTELLENSCHREIEREI</div>
   <div>2026</div>
 </div>
 
+<!-- FILE INPUT (hidden) -->
 <input type="file" id="file-input" accept="audio/*">
+
+<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
 
-const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev";
+// ============================================================
+// CONFIG
+// ============================================================
+const WORKER_URL        = "https://audio-api.manuelbischof-phil.workers.dev";
 const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
 
-let trackList = [];
-let currentAudio = null;
-let isPlaying = false;
+// ============================================================
+
+let trackList        = [];
+let currentAudio     = null;
+let progressInterval = null;
+let isPlaying        = false;
+
 let hasPlayed = sessionStorage.getItem("hasPlayed") === "true";
 
-async function loadTracks(){
-  try{
+// ============================================================
+// LOAD TRACKS
+// ============================================================
+
+async function loadTracks() {
+  try {
+
     const res = await fetch(`${WORKER_URL}/list`);
+    if (!res.ok) return;
+
     const data = await res.json();
+
     trackList = data.files.map(name => ({
       name,
       url: `${BUCKET_PUBLIC_URL}/${name}`
     }));
-  }catch(e){}
+
+  } catch (e) {
+    console.log(e);
+  }
 }
+
 window.addEventListener("load", loadTracks);
 
-document.getElementById("file-input").addEventListener("change", async function(){
+// ============================================================
+// FILE UPLOAD
+// ============================================================
+
+document.getElementById("file-input").addEventListener("change", async function () {
+
   const file = this.files[0];
-  if(!file) return;
+  if (!file) return;
+
+  this.value = "";
 
   const filename = "upload-" + Date.now() + "-" + file.name;
 
-  try{
-    const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`,{
-      method:"PUT",
-      body:file,
-      headers:{ "Content-Type": file.type }
+  try {
+
+    const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`, {
+      method: "PUT",
+      body: file,
+      headers: {
+        "Content-Type": file.type || "audio/mpeg"
+      }
     });
 
-    if(!res.ok) throw new Error();
+    if (!res.ok) throw new Error(await res.text());
 
     trackList.push({
-      name:filename,
-      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}`
+      name: filename,
+      url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}`
     });
 
     showToast("Call is out");
 
-  }catch(e){
+  } catch (e) {
+    console.log(e);
     showToast("Upload failed");
   }
+
 });
 
-function stopClip(){
-  if(currentAudio){
+// ============================================================
+// MICROPHONE RECORDING
+// ============================================================
+
+let mediaRecorder;
+let chunks = [];
+let isRecording = false;
+
+const recordBtn = document.getElementById("recordBtn");
+
+recordBtn.addEventListener("click", async () => {
+
+  if (!isRecording) {
+
+    try {
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+      let options = {};
+
+      if (MediaRecorder.isTypeSupported("audio/webm")) {
+        options.mimeType = "audio/webm";
+      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+        options.mimeType = "audio/mp4";
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+
+      chunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+
+        const mimeType = mediaRecorder.mimeType || "audio/webm";
+
+        const extension =
+          mimeType.includes("mp4") ? "m4a" : "webm";
+
+        const blob = new Blob(chunks, {
+          type: mimeType
+        });
+
+        const filename =
+          `recording-${Date.now()}.${extension}`;
+
+        try {
+
+          const res = await fetch(
+            `${WORKER_URL}/upload/${encodeURIComponent(filename)}`,
+            {
+              method: "PUT",
+              body: blob,
+              headers: {
+                "Content-Type": mimeType
+              }
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(await res.text());
+          }
+
+          trackList.push({
+            name: filename,
+            url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}`
+          });
+
+          showToast("Call is out");
+
+        } catch (e) {
+          console.log(e);
+          showToast("Upload failed");
+        }
+
+        stream.getTracks().forEach(track => track.stop());
+
+      };
+
+      mediaRecorder.start();
+
+      isRecording = true;
+
+      recordBtn.classList.add("recording");
+
+    } catch (e) {
+
+      console.error(e);
+
+      showToast(
+        e.message || "Microphone not available"
+      );
+    }
+
+  } else {
+
+    mediaRecorder.stop();
+
+    isRecording = false;
+
+    recordBtn.classList.remove("recording");
+  }
+
+});
+
+// ============================================================
+// AUDIO PLAYBACK
+// ============================================================
+
+function stopClip() {
+
+  if (currentAudio) {
     currentAudio.pause();
+    currentAudio.src = "";
     currentAudio = null;
   }
+
   isPlaying = false;
+
+  clearInterval(progressInterval);
+
+  document
+    .getElementById("callBackAction")
+    .classList.remove("playing");
 }
 
-function lock(){
+function lockPlayback() {
+
   hasPlayed = true;
-  sessionStorage.setItem("hasPlayed","true");
+
+  sessionStorage.setItem("hasPlayed", "true");
+
   showToast("we are here not to consume");
-  document.getElementById("callBackAction").style.opacity="0.3";
+
+  const el = document.getElementById("callBackAction");
+
+  el.style.opacity = "0.3";
+  el.style.pointerEvents = "none";
 }
 
-function playRandom(){
-  if(hasPlayed){
+function playRandomClip() {
+
+  if (hasPlayed) {
     showToast("we are here not to consume");
     return;
   }
 
-  const track = trackList[Math.floor(Math.random()*trackList.length)];
-  if(!track) return;
+  if (!trackList.length) {
+    showToast("No calls yet");
+    return;
+  }
+
+  stopClip();
+
+  const track =
+    trackList[Math.floor(Math.random() * trackList.length)];
+
+  if (!track) return;
 
   const audio = new Audio(track.url);
+
   currentAudio = audio;
+
   isPlaying = true;
 
-  audio.onended = () => {
+  document
+    .getElementById("callBackAction")
+    .classList.add("playing");
+
+  audio.addEventListener("ended", () => {
     stopClip();
-    lock();
-  };
+    lockPlayback();
+  });
 
-  audio.play().catch(()=>showToast("blocked"));
+  audio.addEventListener("error", () => {
+    stopClip();
+    showToast("Could not play");
+  });
+
+  audio.play().catch((err) => {
+    console.log(err);
+    stopClip();
+    showToast("Playback blocked");
+  });
 }
 
-function togglePlay(){
-  if(isPlaying) stopClip();
-  else playRandom();
+function togglePlay() {
+
+  if (hasPlayed) {
+    showToast("we are here not to consume");
+    return;
+  }
+
+  if (isPlaying) {
+    stopClip();
+  } else {
+    playRandomClip();
+  }
 }
+
+// ============================================================
+// IMAGE REVEAL
+// ============================================================
 
 const imgs = document.querySelectorAll(".bottom-images img");
-const obs = new IntersectionObserver(e=>{
-  e.forEach(x=>{
-    if(x.isIntersecting) x.target.classList.add("show");
-  });
-},{threshold:0.2});
-imgs.forEach(i=>obs.observe(i));
 
-function showToast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2500);
+const observer = new IntersectionObserver((entries) => {
+
+  entries.forEach(entry => {
+
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+
+  });
+
+}, {
+  threshold: 0.2
+});
+
+imgs.forEach(img => observer.observe(img));
+
+// ============================================================
+// TOAST
+// ============================================================
+
+let toastTimeout;
+
+function showToast(msg) {
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = msg;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
 
 </script>
-
-</body>
+  </body>
 </html>
