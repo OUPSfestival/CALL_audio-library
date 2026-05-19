@@ -37,7 +37,6 @@ html,body{
   width:100%;
   overflow:hidden;
   padding:18px 0;
-  border-bottom:1px solid rgba(0,0,0,.08);
 }
 
 .marquee{
@@ -299,6 +298,23 @@ function stop(){
   clearInterval(interval);
   isPlaying = false;
 }
+
+  const marquee = document.querySelector(".marquee");
+
+function pause(){
+  marquee.classList.add("paused");
+}
+
+function resume(){
+  marquee.classList.remove("paused");
+}
+
+marquee.addEventListener("mousedown", pause);
+marquee.addEventListener("mouseup", resume);
+marquee.addEventListener("mouseleave", resume);
+
+marquee.addEventListener("touchstart", pause);
+marquee.addEventListener("touchend", resume);
 
 </script>
 
