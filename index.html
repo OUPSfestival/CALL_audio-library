@@ -527,50 +527,35 @@ function showToast(msg) {
   toastTimeout = setTimeout(() => { toast.classList.remove("show"); }, 2500);
 }
 
-// ============================================================
-// IMAGE GALLERY DYNAMIC LOADING (Random order)
-// ============================================================
+<script>
 const galleryFolder = 'gallery/';
 const galleryElement = document.getElementById('gallery');
 
-// IntersectionObserver for reveal effect
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) entry.target.classList.add("show");
   });
 }, { threshold: 0.2 });
 
-// Fetch all images from the gallery folder
-async function loadGalleryImages() {
-  try {
-    const res = await fetch(galleryFolder);
-    const text = await res.text();
-    const parser = new DOMParser();
-    const html = parser.parseFromString(text, "text/html");
-    const links = Array.from(html.querySelectorAll("a"))
-      .map(a => a.getAttribute("href"))
-      .filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name));
+const imageFiles = [
+  'image1.jpg',
+  'image2.png',
+  'image3.webp',
+  // add all filenames here
+];
 
-    // Shuffle links
-    for (let i = links.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [links[i], links[j]] = [links[j], links[i]];
-    }
-
-    // Append images
-    links.forEach(filename => {
-      const img = document.createElement('img');
-      img.src = galleryFolder + filename;
-      img.alt = filename;
-      galleryElement.appendChild(img);
-      observer.observe(img);
-    });
- } catch (e) {
-    console.error("Failed to load gallery images:", e);
-  }
+for (let i = imageFiles.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [imageFiles[i], imageFiles[j]] = [imageFiles[j], imageFiles[i]];
 }
 
-window.addEventListener("load", loadGalleryImages);
+imageFiles.forEach(filename => {
+  const img = document.createElement('img');
+  img.src = galleryFolder + filename;
+  img.alt = filename;
+  galleryElement.appendChild(img);
+  observer.observe(img);
+});
 </script>
 </body>
 </html>
