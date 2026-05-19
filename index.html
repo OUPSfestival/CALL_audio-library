@@ -1,243 +1,696 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CALL — Haltestellenschwärmerei</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      background: #1a3faa;
-      color: #e8e4d8;
-      font-family: 'Archivo Black', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 28px 16px;
-      border-bottom: 1px solid rgba(232,228,216,0.2);
-      flex-shrink: 0;
-    }
-    nav a {
-      font-size: 13px;
-      color: #e8e4d8;
-      text-decoration: none;
-      letter-spacing: 0.02em;
-    }
-    nav a:hover { text-decoration: underline; }
-    .nav-right {
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
-    .nav-right span {
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      color: rgba(232,228,216,0.55);
-    }
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 80px;
-      padding: 60px 28px;
-    }
-    .action {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 22px;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .action .icon {
-      font-size: 96px;
-      line-height: 1;
-      transition: transform 0.15s;
-    }
-    .action:hover .icon { transform: scale(1.06); }
-    .action:active .icon { transform: scale(0.97); }
-    .action .label {
-      font-size: 12px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #e8e4d8;
-    }
-    #play-action .play-icon { display: block; }
-    #play-action .stop-icon { display: none; }
-    #play-action.playing .play-icon { display: none; }
-    #play-action.playing .stop-icon { display: block; }
-    #play-action.playing .label { color: rgba(232,228,216,0.5); }
-    #toast {
-      position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: #e8e4d8;
-      color: #1a3faa;
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 12px 28px;
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-    #file-input { display: none; }
-    @media (max-width: 480px) {
-      main { gap: 48px; padding: 40px 20px; }
-      .action .icon { font-size: 72px; }
-      .nav-right span:first-child { display: none; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>CALL — Haltestellenschwärmerei</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+  background:#f3f0ea;
+  color:#111;
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+}
+
+/* ------------------------------------------------ */
+/* NAVIGATION */
+/* ------------------------------------------------ */
+
+nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:100;
+  padding:22px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  mix-blend-mode:difference;
+}
+
+nav a,
+nav span{
+  color:white;
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  font-weight:500;
+}
+
+.nav-right{
+  display:flex;
+  gap:28px;
+}
+
+/* ------------------------------------------------ */
+/* HERO */
+/* ------------------------------------------------ */
+
+.hero{
+  width:100%;
+  min-height:100vh;
+  padding:140px 40px 60px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.hero-top{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:60px;
+  align-items:start;
+}
+
+.massive-title{
+  font-size:clamp(72px, 13vw, 240px);
+  line-height:.88;
+  letter-spacing:-0.08em;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.info-column{
+  padding-top:8px;
+}
+
+.info-column p{
+  font-size:14px;
+  line-height:1.7;
+  max-width:420px;
+  margin-bottom:28px;
+}
+
+.info-meta{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.info-meta span{
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.55;
+}
+
+/* ------------------------------------------------ */
+/* INTERACTION AREA */
+/* ------------------------------------------------ */
+
+.interaction-grid{
+  width:100%;
+  margin-top:120px;
+  border-top:1px solid rgba(0,0,0,.12);
+  padding-top:40px;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.action{
+  position:relative;
+  min-height:340px;
+  background:white;
+  border:1px solid rgba(0,0,0,.08);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  padding:26px;
+
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.action:hover{
+  transform:translateY(-4px);
+}
+
+.action-number{
+  font-size:11px;
+  letter-spacing:.08em;
+  opacity:.45;
+  text-transform:uppercase;
+}
+
+.action-main{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.action-title{
+  font-size:48px;
+  line-height:.9;
+  letter-spacing:-0.06em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+.action-sub{
+  font-size:13px;
+  line-height:1.5;
+  max-width:240px;
+  opacity:.6;
+}
+
+.icon-wrap{
+  position:absolute;
+  bottom:22px;
+  right:22px;
+  font-size:92px;
+  line-height:1;
+  opacity:.1;
+  transition:.2s ease;
+}
+
+.action:hover .icon-wrap{
+  transform:scale(1.05);
+  opacity:.16;
+}
+
+#play-action.playing{
+  background:#111;
+  color:#f3f0ea;
+}
+
+#play-action.playing .icon-wrap{
+  opacity:.4;
+}
+
+.play-icon{
+  display:block;
+}
+
+.stop-icon{
+  display:none;
+}
+
+#play-action.playing .play-icon{
+  display:none;
+}
+
+#play-action.playing .stop-icon{
+  display:block;
+}
+
+/* ------------------------------------------------ */
+/* FOOTER TEXT */
+/* ------------------------------------------------ */
+
+.bottom-strip{
+  margin-top:80px;
+  padding-top:18px;
+  border-top:1px solid rgba(0,0,0,.12);
+
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.bottom-strip span{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  opacity:.45;
+}
+
+/* ------------------------------------------------ */
+/* TOAST */
+/* ------------------------------------------------ */
+
+#toast{
+  position:fixed;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+
+  background:#111;
+  color:#fff;
+
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+
+  padding:14px 24px;
+
+  opacity:0;
+  transition:.3s ease;
+
+  pointer-events:none;
+
+  z-index:999;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+#file-input{
+  display:none;
+}
+
+/* ------------------------------------------------ */
+/* MOBILE */
+/* ------------------------------------------------ */
+
+@media (max-width:900px){
+
+  .hero-top{
+    grid-template-columns:1fr;
+    gap:50px;
+  }
+
+  .interaction-grid{
+    grid-template-columns:1fr;
+  }
+
+  .action{
+    min-height:260px;
+  }
+
+  .action-title{
+    font-size:38px;
+  }
+
+}
+
+@media (max-width:600px){
+
+  nav{
+    padding:18px;
+  }
+
+  .nav-right span:nth-child(2){
+    display:none;
+  }
+
+  .hero{
+    padding:110px 18px 40px;
+  }
+
+  .massive-title{
+    font-size:64px;
+  }
+
+  .action{
+    padding:22px;
+  }
+
+  .action-title{
+    font-size:30px;
+  }
+
+  .icon-wrap{
+    font-size:72px;
+  }
+
+}
+
+</style>
 </head>
+
 <body>
 
-  <nav>
-    <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank" rel="noopener">Manuel Phil. Bischof</a>
-    <div class="nav-right">
-      <span>CALL for Haltestellenschwärmerei</span>
-      <span>About</span>
+<nav>
+
+  <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank">
+    Manuel Phil. Bischof
+  </a>
+
+  <div class="nav-right">
+    <span>Open Audio Call</span>
+    <span>2026</span>
+  </div>
+
+</nav>
+
+<section class="hero">
+
+  <div class="hero-top">
+
+    <div class="massive-title">
+      CALL<br>
+      FOR<br>
+      HALTESTELLEN<br>
+      SCHWÄRMEREI
     </div>
-  </nav>
 
-  <main>
-    <div class="action" id="upload-action" onclick="document.getElementById('file-input').click()">
-      <div class="icon">⛰️</div>
-      <div class="label">Send Call</div>
+    <div class="info-column">
+
+      <p>
+        An open participatory audio archive.
+        Upload fragments, voices, environments,
+        accidental recordings, memories,
+        field recordings and sonic observations.
+      </p>
+
+      <p>
+        Every uploaded file becomes part of
+        a continuously shifting collective sound work.
+      </p>
+
+      <div class="info-meta">
+        <span>Public submission platform</span>
+        <span>Audio fragments only</span>
+        <span>Randomized playback system</span>
+      </div>
+
     </div>
-    <input type="file" id="file-input" accept="audio/*" multiple />
 
-    <div class="action" id="play-action" onclick="togglePlay()">
-      <div class="icon play-icon">▶</div>
-      <div class="icon stop-icon">■</div>
-      <div class="label">Play Call</div>
+  </div>
+
+  <div class="interaction-grid">
+
+    <!-- UPLOAD -->
+
+    <div
+      class="action"
+      id="upload-action"
+      onclick="document.getElementById('file-input').click()"
+    >
+
+      <div class="action-number">
+        01 — Upload
+      </div>
+
+      <div class="action-main">
+
+        <div class="action-title">
+          Send<br>
+          Audio
+        </div>
+
+        <div class="action-sub">
+          Upload a sound fragment to the shared archive.
+          Any audio format supported.
+        </div>
+
+      </div>
+
+      <div class="icon-wrap">
+        ⤴
+      </div>
+
     </div>
-  </main>
 
-  <div id="toast"></div>
+    <!-- PLAY -->
 
-  <script>
-    // ============================================================
-    //  CONFIGURATION — fill these in
-    // ============================================================
-    const WORKER_URL        = "https://audio-api.manuelbischof-phil.workers.dev/";
-    const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
-    // ============================================================
+    <div
+      class="action"
+      id="play-action"
+      onclick="togglePlay()"
+    >
 
-    let trackList        = [];
-    let currentAudio     = null;
-    let progressInterval = null;
-    let isPlaying        = false;
+      <div class="action-number">
+        02 — Listen
+      </div>
 
-    const fileInput  = document.getElementById("file-input");
-    const playAction = document.getElementById("play-action");
+      <div class="action-main">
 
-    async function loadExistingFiles() {
-      try {
-        const res  = await fetch(`${WORKER_URL}/list`);
-        if (!res.ok) return;
-        const data = await res.json();
-        trackList  = data.files.map(name => ({
-          name,
-          url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
-        }));
-      } catch (e) {}
-    }
-    loadExistingFiles();
+        <div class="action-title">
+          Random<br>
+          Playback
+        </div>
 
-    fileInput.addEventListener("change", () => {
-      const files = [...fileInput.files].filter(f => f.type.startsWith("audio/"));
-      if (!files.length) return;
-      files.forEach(uploadFile);
-      fileInput.value = "";
-    });
+        <div class="action-sub">
+          Listen to a random 30 second excerpt
+          from the archive.
+        </div>
 
-    async function uploadFile(file) {
-      try {
-        const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type || "audio/mpeg" }
-        });
-        if (!res.ok) throw new Error(await res.text());
-        const url = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`;
-        if (!trackList.find(t => t.name === file.name)) {
-          trackList.push({ name: file.name, url });
+      </div>
+
+      <div class="icon-wrap play-icon">
+        ▶
+      </div>
+
+      <div class="icon-wrap stop-icon">
+        ■
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="bottom-strip">
+    <span>Collective Audio Platform</span>
+    <span>Brussels / Vienna / Everywhere</span>
+    <span>2026</span>
+  </div>
+
+</section>
+
+<input
+  type="file"
+  id="file-input"
+  accept="audio/*"
+  multiple
+/>
+
+<div id="toast"></div>
+
+<script>
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+
+const WORKER_URL =
+"https://audio-api.manuelbischof-phil.workers.dev/";
+
+const BUCKET_PUBLIC_URL =
+"https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
+
+// ============================================================
+
+let trackList        = [];
+let currentAudio     = null;
+let progressInterval = null;
+let isPlaying        = false;
+
+const fileInput  = document.getElementById("file-input");
+const playAction = document.getElementById("play-action");
+
+// LOAD EXISTING FILES
+
+async function loadExistingFiles(){
+
+  try{
+
+    const res = await fetch(`${WORKER_URL}/list`);
+
+    if(!res.ok) return;
+
+    const data = await res.json();
+
+    trackList = data.files.map(name => ({
+      name,
+      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
+    }));
+
+  }catch(e){}
+
+}
+
+loadExistingFiles();
+
+// FILE INPUT
+
+fileInput.addEventListener("change", () => {
+
+  const files = [...fileInput.files]
+    .filter(f => f.type.startsWith("audio/"));
+
+  if(!files.length) return;
+
+  files.forEach(uploadFile);
+
+  fileInput.value = "";
+
+});
+
+// UPLOAD
+
+async function uploadFile(file){
+
+  try{
+
+    const res = await fetch(
+      `${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,
+      {
+        method:"PUT",
+        body:file,
+        headers:{
+          "Content-Type":file.type || "audio/mpeg"
         }
-        showToast("Call is out");
-      } catch (e) {
-        showToast("Upload failed");
       }
+    );
+
+    if(!res.ok){
+      throw new Error(await res.text());
     }
 
-    function togglePlay() {
-      if (isPlaying) {
-        stopClip();
-      } else {
-        playRandomClip();
-      }
-    }
+    const url =
+      `${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`;
 
-    function playRandomClip() {
-      if (!trackList.length) {
-        showToast("No calls yet");
-        return;
-      }
-      stopClip();
-      const track = trackList[Math.floor(Math.random() * trackList.length)];
-      const audio = new Audio(track.url);
-      audio.crossOrigin = "anonymous";
-      currentAudio = audio;
+    if(!trackList.find(t => t.name === file.name)){
 
-      audio.addEventListener("loadedmetadata", () => {
-        const duration = audio.duration;
-        const maxStart = Math.max(0, duration - 30);
-        const start    = Math.random() * maxStart;
-        audio.currentTime = start;
-        audio.play();
-        isPlaying = true;
-        playAction.classList.add("playing");
-        progressInterval = setInterval(() => {
-          if (audio.currentTime - start >= 30) stopClip();
-        }, 500);
+      trackList.push({
+        name:file.name,
+        url
       });
 
-      audio.addEventListener("ended", stopClip);
-      audio.addEventListener("error", () => { stopClip(); showToast("Could not play"); });
     }
 
-    function stopClip() {
-      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-      clearInterval(progressInterval);
-      isPlaying = false;
-      playAction.classList.remove("playing");
-    }
+    showToast("Audio Uploaded");
 
-    let toastTimeout;
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
-    }
-  </script>
+  }catch(e){
+
+    showToast("Upload Failed");
+
+  }
+
+}
+
+// TOGGLE
+
+function togglePlay(){
+
+  if(isPlaying){
+    stopClip();
+  }else{
+    playRandomClip();
+  }
+
+}
+
+// RANDOM PLAY
+
+function playRandomClip(){
+
+  if(!trackList.length){
+
+    showToast("No Audio Yet");
+
+    return;
+  }
+
+  stopClip();
+
+  const track =
+    trackList[Math.floor(Math.random() * trackList.length)];
+
+  const audio = new Audio(track.url);
+
+  audio.crossOrigin = "anonymous";
+
+  currentAudio = audio;
+
+  audio.addEventListener("loadedmetadata", () => {
+
+    const duration = audio.duration;
+
+    const maxStart = Math.max(0, duration - 30);
+
+    const start = Math.random() * maxStart;
+
+    audio.currentTime = start;
+
+    audio.play();
+
+    isPlaying = true;
+
+    playAction.classList.add("playing");
+
+    progressInterval = setInterval(() => {
+
+      if(audio.currentTime - start >= 30){
+        stopClip();
+      }
+
+    }, 500);
+
+  });
+
+  audio.addEventListener("ended", stopClip);
+
+  audio.addEventListener("error", () => {
+
+    stopClip();
+
+    showToast("Playback Error");
+
+  });
+
+}
+
+// STOP
+
+function stopClip(){
+
+  if(currentAudio){
+
+    currentAudio.pause();
+
+    currentAudio = null;
+
+  }
+
+  clearInterval(progressInterval);
+
+  isPlaying = false;
+
+  playAction.classList.remove("playing");
+
+}
+
+// TOAST
+
+let toastTimeout;
+
+function showToast(msg){
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = msg;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+
+    toast.classList.remove("show");
+
+  }, 2500);
+
+}
+
+</script>
 
 </body>
 </html>
