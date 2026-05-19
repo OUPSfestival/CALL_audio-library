@@ -271,23 +271,24 @@ a{
 
   <div class="action" onclick="document.getElementById('file-input').click()">
 
-    <svg viewBox="0 0 400 260" class="arc-text">
+   <svg viewBox="0 0 400 260" class="arc-text">
 
-      <defs>
-        <path id="backPath" d="M 20 240 Q 200 20 380 240" />
-      </defs>
+  <defs>
+    <path id="sendPath" d="M 20 90 Q 200 10 380 90" />
+  </defs>
 
-      <text class="arc-big">
-        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
-          SEND CALL
-        </textPath>
-      </text>
+  <text class="arc-big">
+    <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+      SEND CALL
+    </textPath>
+  </text>
 
-      <text class="arc-small">
-        <textPath href="#sendPath" startOffset="50%" text-anchor="middle" >
-          Schicke deinen Ruf in die digitalen Täler,
-        </textPath>
-      </text>
+  <text class="arc-small">
+    <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+      Schicke deinen Ruf in die digitalen Täler,
+    </textPath>
+  </text>
+
 
     </svg>
 
@@ -295,25 +296,28 @@ a{
 
   <div class="action" id="play-action" onclick="togglePlay()">
 
-    <svg viewBox="0 0 400 260" class="arc-text">
 
-      <defs>
-        <path id="backPath" d="M 20 250 Q 200 240 380 180" />
-      </defs>
 
-      <text class="arc-big">
-        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
-          CALL BACK
-        </textPath>
-      </text>
+     <svg viewBox="0 0 400 260" class="arc-text">
 
-      <text class="arc-small">
-        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
-          nun Höre dein Echo
-        </textPath>
-      </text>
+  <defs>
+    <path id="backPath" d="M 20 170 Q 200 250 380 170" />
+  </defs>
 
-    </svg>
+  <text class="arc-big">
+    <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+      CALL BACK
+    </textPath>
+  </text>
+
+  <text class="arc-small">
+    <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+      nun Höre dein Echo
+    </textPath>
+  </text>
+
+</svg>
+
 
   </div>
 
