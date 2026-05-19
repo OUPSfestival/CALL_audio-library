@@ -48,7 +48,7 @@ html,body{
 
   padding-left:100%;
   animation:scroll 110s linear infinite;
-  opacity:.8;
+  opacity:.85;
 }
 
 @keyframes scroll{
@@ -68,7 +68,7 @@ html,body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:80px;
+  gap:100px;
   text-align:center;
   padding:120px 20px;
 }
@@ -82,29 +82,29 @@ html,body{
 }
 
 .action:hover{
-  transform:translateY(-3px);
-  opacity:.7;
+  transform:translateY(-4px);
+  opacity:.75;
 }
 
-/* ---------------- ARC TYPO (BOLDER VERSION) ---------------- */
+/* ---------------- ARC TYPO (BIGGER) ---------------- */
 
 .arc-text{
-  width:560px;
-  height:240px;
+  width:680px;
+  height:300px;
   display:block;
 }
 
 .arc-big{
-  font-size:48px;
-  letter-spacing:.06em;
+  font-size:58px;
+  letter-spacing:.05em;
   text-transform:uppercase;
   fill:#111;
   font-weight:800;
 }
 
 .arc-small{
-  font-size:15px;
-  letter-spacing:.05em;
+  font-size:18px;
+  letter-spacing:.04em;
   text-transform:uppercase;
   fill:#111;
   opacity:.65;
@@ -145,8 +145,8 @@ html,body{
 
 @media(max-width:700px){
   .arc-text{
-    width:340px;
-    height:160px;
+    width:360px;
+    height:180px;
   }
 
   .arc-big{
@@ -173,15 +173,14 @@ html,body{
 <!-- CENTER -->
 <div class="wrap">
 
-  <!-- SEND CALL (CONVEX - STRONG) -->
+  <!-- SEND CALL -->
   <div class="action" onclick="document.getElementById('file-input').click()">
 
-    <svg viewBox="0 0 400 240" class="arc-text">
+    <svg viewBox="0 0 400 260" class="arc-text">
 
       <defs>
-        <!-- stronger convex bowl -->
         <path id="sendPath"
-          d="M 30 50 Q 200 230 370 50" />
+          d="M 20 40 Q 200 240 380 40" />
       </defs>
 
       <text class="arc-big">
@@ -200,15 +199,14 @@ html,body{
 
   </div>
 
-  <!-- CALL BACK (CONCAVE - STRONG) -->
+  <!-- CALL BACK -->
   <div class="action" id="play-action" onclick="togglePlay()">
 
-    <svg viewBox="0 0 400 240" class="arc-text">
+    <svg viewBox="0 0 400 260" class="arc-text">
 
       <defs>
-        <!-- stronger concave bowl -->
         <path id="backPath"
-          d="M 30 210 Q 200 10 370 210" />
+          d="M 20 240 Q 200 20 380 240" />
       </defs>
 
       <text class="arc-big">
@@ -341,6 +339,34 @@ function stop(){
   }
   clearInterval(interval);
   isPlaying = false;
+}
+
+/* ---------------- HOLD TO PAUSE MARQUEE (FIXED) ---------------- */
+
+const marquee = document.querySelector(".marquee");
+
+if(marquee){
+
+  marquee.addEventListener("mousedown", () => {
+    marquee.classList.add("paused");
+  });
+
+  marquee.addEventListener("mouseup", () => {
+    marquee.classList.remove("paused");
+  });
+
+  marquee.addEventListener("mouseleave", () => {
+    marquee.classList.remove("paused");
+  });
+
+  marquee.addEventListener("touchstart", () => {
+    marquee.classList.add("paused");
+  }, { passive:true });
+
+  marquee.addEventListener("touchend", () => {
+    marquee.classList.remove("paused");
+  });
+
 }
 
 </script>
