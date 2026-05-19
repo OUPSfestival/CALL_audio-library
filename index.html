@@ -3,216 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Audio Library</title>
+  <title>CALL — Haltestellenschwärmerei</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    html, body { height: 100%; }
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #0e0e0e;
-      color: #e8e8e0;
+      background: #1a3faa;
+      color: #e8e4d8;
+      font-family: 'Archivo Black', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 3rem 1.5rem;
     }
-
-    h1 {
-      font-size: 1.1rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #b0f0c0;
-      margin-bottom: 0.4rem;
-    }
-    .subtitle {
-      font-size: 0.75rem;
-      color: #555;
-      letter-spacing: 0.1em;
-      margin-bottom: 3rem;
-    }
-    .container {
-      width: 100%;
-      max-width: 560px;
+    nav {
       display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px 16px;
+      border-bottom: 1px solid rgba(232,228,216,0.2);
+      flex-shrink: 0;
     }
-
-    #drop-zone {
-      border: 1px dashed #333;
-      border-radius: 4px;
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
+    nav a {
+      font-size: 13px;
+      color: #e8e4d8;
+      text-decoration: none;
+      letter-spacing: 0.02em;
     }
-    #drop-zone:hover, #drop-zone.drag-over { border-color: #b0f0c0; background: #161e16; }
-    #drop-zone .icon { font-size: 2rem; margin-bottom: 0.75rem; }
-    #drop-zone p { font-size: 0.8rem; color: #666; line-height: 1.7; }
-    #drop-zone p strong { color: #b0f0c0; font-weight: normal; }
-    #file-input { display: none; }
-
-    .btn-row { display: flex; gap: 12px; }
-    button {
+    nav a:hover { text-decoration: underline; }
+    .nav-right {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    .nav-right span {
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: rgba(232,228,216,0.55);
+    }
+    main {
       flex: 1;
-      background: none;
-      border: 1px solid #333;
-      color: #e8e8e0;
-      font-family: inherit;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 80px;
+      padding: 60px 28px;
     }
-    button:hover:not(:disabled) { border-color: #b0f0c0; color: #b0f0c0; }
-    button:disabled { opacity: 0.3; cursor: default; }
-    button.accent { border-color: #b0f0c0; color: #b0f0c0; }
-    button.accent:hover:not(:disabled) { background: #161e16; }
-
-    #now-playing {
-      display: none;
-      border: 1px solid #222;
-      border-radius: 4px;
-      padding: 1rem 1.25rem;
-      background: #141414;
+    .action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    #now-playing .label {
-      font-size: 0.65rem; color: #444;
-      letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px;
+    .action .icon {
+      font-size: 96px;
+      line-height: 1;
+      transition: transform 0.15s;
     }
-    #track-name {
-      font-size: 0.9rem; color: #b0f0c0;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+    .action:hover .icon { transform: scale(1.06); }
+    .action:active .icon { transform: scale(0.97); }
+    .action .label {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #e8e4d8;
     }
-    #track-info { font-size: 0.72rem; color: #555; margin-bottom: 12px; }
-    .progress-track { height: 2px; background: #222; border-radius: 2px; overflow: hidden; }
-    #progress-bar { height: 100%; width: 0%; background: #b0f0c0; transition: width 0.4s linear; }
-
-    #file-list { display: flex; flex-direction: column; gap: 6px; }
-    .file-row {
-      display: flex; align-items: center; gap: 10px;
-      border: 1px solid #1e1e1e; border-radius: 2px;
-      padding: 8px 12px; font-size: 0.78rem; background: #111;
+    #play-action .play-icon { display: block; }
+    #play-action .stop-icon { display: none; }
+    #play-action.playing .play-icon { display: none; }
+    #play-action.playing .stop-icon { display: block; }
+    #play-action.playing .label { color: rgba(232,228,216,0.5); }
+    #toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #e8e4d8;
+      color: #1a3faa;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
     }
-    .file-row .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #ccc; }
-    .file-row .fsize { color: #444; flex-shrink: 0; }
-    .file-row .fstatus { flex-shrink: 0; font-size: 0.7rem; color: #444; min-width: 60px; text-align: right; }
-    .file-row .fstatus.uploading { color: #b0f0c0; }
-    .file-row .fstatus.done { color: #4a9; }
-    .file-row .fstatus.error { color: #e55; }
-    .del-btn {
-      background: none; border: none; color: #333; cursor: pointer;
-      font-size: 1rem; padding: 2px 4px; flex-shrink: 0;
-      font-family: inherit; transition: color 0.15s;
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
-    .del-btn:hover { color: #e55; }
-
-    #empty-hint { text-align: center; font-size: 0.75rem; color: #333; padding: 1rem 0; }
-    #status-msg { font-size: 0.72rem; color: #555; text-align: center; min-height: 1rem; letter-spacing: 0.05em; }
-    #status-msg.error { color: #e55; }
-
-    .info-box {
-      border: 1px solid #1e1e1e;
-      border-radius: 4px;
-      padding: 1rem 1.25rem;
-      background: #111;
-      font-size: 0.75rem;
-      color: #555;
-      line-height: 1.8;
+    #file-input { display: none; }
+    @media (max-width: 480px) {
+      main { gap: 48px; padding: 40px 20px; }
+      .action .icon { font-size: 72px; }
+      .nav-right span:first-child { display: none; }
     }
-    .info-box a { color: #b0f0c0; text-decoration: none; }
   </style>
 </head>
 <body>
 
-  <h1>&#9836; Audio Library</h1>
-  <p class="subtitle">upload &mdash; store &mdash; discover</p>
-
-  <div class="container">
-
-    <div id="drop-zone" onclick="document.getElementById('file-input').click()">
-      <div class="icon">&#8679;</div>
-      <p><strong>Click to upload</strong> or drag &amp; drop<br>MP3 &bull; WAV &bull; OGG &bull; FLAC &bull; M4A</p>
-      <input type="file" id="file-input" accept="audio/*" multiple />
+  <nav>
+    <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank" rel="noopener">Manuel Phil. Bischof</a>
+    <div class="nav-right">
+      <span>CALL for Haltestellenschwärmerei</span>
+      <span>About</span>
     </div>
+  </nav>
 
-    <div class="btn-row">
-      <button class="accent" id="play-btn" disabled onclick="playRandomClip()">
-        &#9654; Random 30s clip
-      </button>
-      <button id="stop-btn" disabled onclick="stopClip()">
-        &#9632; Stop
-      </button>
+  <main>
+    <div class="action" id="upload-action" onclick="document.getElementById('file-input').click()">
+      <div class="icon">⛰️</div>
+      <div class="label">Send Call</div>
     </div>
+    <input type="file" id="file-input" accept="audio/*" multiple />
 
-    <div id="now-playing">
-      <div class="label">Now playing</div>
-      <div id="track-name"></div>
-      <div id="track-info"></div>
-      <div class="progress-track"><div id="progress-bar"></div></div>
+    <div class="action" id="play-action" onclick="togglePlay()">
+      <div class="icon play-icon">▶</div>
+      <div class="icon stop-icon">■</div>
+      <div class="label">Play Call</div>
     </div>
+  </main>
 
-    <div id="status-msg"></div>
-    <div id="file-list"></div>
-    <div id="empty-hint">No files yet — upload something above.</div>
-
-  </div>
+  <div id="toast"></div>
 
   <script>
     // ============================================================
-    //  CONFIGURATION — fill these in (see README step by step)
+    //  CONFIGURATION — fill these in
     // ============================================================
-
-    // Your Cloudflare Worker URL (you'll get this in Part 2 of the README)
-    const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev/";
-
-    // Your R2 public bucket URL (you'll get this in Part 1 of the README)
-    // Example: "https://pub-abc123.r2.dev"
-    const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
-
+    const WORKER_URL        = "https://your-worker.workers.dev";
+    const BUCKET_PUBLIC_URL = "https://pub-XXXXXXXX.r2.dev";
     // ============================================================
 
     let trackList        = [];
     let currentAudio     = null;
     let progressInterval = null;
+    let isPlaying        = false;
 
-    const fileInput   = document.getElementById("file-input");
-    const dropZone    = document.getElementById("drop-zone");
-    const playBtn     = document.getElementById("play-btn");
-    const stopBtn     = document.getElementById("stop-btn");
-    const fileListEl  = document.getElementById("file-list");
-    const nowPlaying  = document.getElementById("now-playing");
-    const trackNameEl = document.getElementById("track-name");
-    const trackInfoEl = document.getElementById("track-info");
-    const progressBar = document.getElementById("progress-bar");
-    const emptyHint   = document.getElementById("empty-hint");
-    const statusMsg   = document.getElementById("status-msg");
+    const fileInput  = document.getElementById("file-input");
+    const playAction = document.getElementById("play-action");
 
-    // Drag & drop
-    dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
-    dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
-    dropZone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropZone.classList.remove("drag-over");
-      handleFiles([...e.dataTransfer.files].filter(f => f.type.startsWith("audio/")));
+    async function loadExistingFiles() {
+      try {
+        const res  = await fetch(`${WORKER_URL}/list`);
+        if (!res.ok) return;
+        const data = await res.json();
+        trackList  = data.files.map(name => ({
+          name,
+          url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
+        }));
+      } catch (e) {}
+    }
+    loadExistingFiles();
+
+    fileInput.addEventListener("change", () => {
+      const files = [...fileInput.files].filter(f => f.type.startsWith("audio/"));
+      if (!files.length) return;
+      files.forEach(uploadFile);
+      fileInput.value = "";
     });
-    fileInput.addEventListener("change", () => handleFiles([...fileInput.files]));
 
-    function handleFiles(files) { files.forEach(uploadFile); }
-
-    // Upload via Cloudflare Worker
     async function uploadFile(file) {
-      const rowId = "row-" + Date.now() + Math.random().toString(36).slice(2);
-      addFileRow(rowId, file.name, file.size, "uploading", "uploading…");
-
       try {
         const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`, {
           method: "PUT",
@@ -221,53 +177,28 @@
         });
         if (!res.ok) throw new Error(await res.text());
         const url = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`;
-        trackList.push({ name: file.name, url });
-        updateRowStatus(rowId, "saved ✓", "done");
-        enablePlay();
-        setStatus("");
-      } catch (e) {
-        updateRowStatus(rowId, "error", "error");
-        setStatus("Upload failed: " + e.message, true);
-      }
-    }
-
-    // Load existing files from Worker
-    async function loadExistingFiles() {
-      setStatus("Loading library…");
-      try {
-        const res  = await fetch(`${WORKER_URL}/list`);
-        if (!res.ok) throw new Error("Could not load files");
-        const data = await res.json();
-        for (const name of data.files) {
-          const url = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
-          trackList.push({ name, url });
-          addFileRow("stored-" + name, name, null, "done", "saved ✓");
+        if (!trackList.find(t => t.name === file.name)) {
+          trackList.push({ name: file.name, url });
         }
-        enablePlay();
-        setStatus("");
-        if (!data.files.length) emptyHint.style.display = "block";
+        showToast("Call is out");
       } catch (e) {
-        setStatus("Could not connect — check WORKER_URL in the code.", true);
+        showToast("Upload failed");
       }
     }
-    loadExistingFiles();
 
-    // Delete via Worker
-    window.deleteTrack = async function(name, rowId) {
-      try {
-        await fetch(`${WORKER_URL}/delete/${encodeURIComponent(name)}`, { method: "DELETE" });
-        trackList = trackList.filter(t => t.name !== name);
-        document.getElementById(rowId)?.remove();
-        enablePlay();
-        if (!fileListEl.children.length) emptyHint.style.display = "block";
-      } catch (e) {
-        setStatus("Delete failed: " + e.message, true);
+    function togglePlay() {
+      if (isPlaying) {
+        stopClip();
+      } else {
+        playRandomClip();
       }
-    };
+    }
 
-    // Play random 30s clip
-    window.playRandomClip = function() {
-      if (!trackList.length) return;
+    function playRandomClip() {
+      if (!trackList.length) {
+        showToast("No calls yet");
+        return;
+      }
       stopClip();
       const track = trackList[Math.floor(Math.random() * trackList.length)];
       const audio = new Audio(track.url);
@@ -280,59 +211,33 @@
         const start    = Math.random() * maxStart;
         audio.currentTime = start;
         audio.play();
-
-        const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
-        trackNameEl.textContent = track.name;
-        trackInfoEl.textContent = `clip ${fmt(start)} → ${fmt(Math.min(start + 30, duration))}  ·  total ${fmt(duration)}`;
-        nowPlaying.style.display = "block";
-        stopBtn.disabled = false;
-        progressBar.style.width = "0%";
-
+        isPlaying = true;
+        playAction.classList.add("playing");
         progressInterval = setInterval(() => {
-          const elapsed = audio.currentTime - start;
-          progressBar.style.width = Math.min(100, (elapsed / 30) * 100) + "%";
-          if (elapsed >= 30) stopClip();
-        }, 300);
+          if (audio.currentTime - start >= 30) stopClip();
+        }, 500);
       });
 
-      audio.addEventListener("error", () => setStatus("Could not play track.", true));
-    };
+      audio.addEventListener("ended", stopClip);
+      audio.addEventListener("error", () => { stopClip(); showToast("Could not play"); });
+    }
 
-    window.stopClip = function() {
+    function stopClip() {
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       clearInterval(progressInterval);
-      progressBar.style.width = "0%";
-      nowPlaying.style.display = "none";
-      stopBtn.disabled = true;
-    };
-
-    function addFileRow(id, name, size, statusClass, statusText) {
-      emptyHint.style.display = "none";
-      const row = document.createElement("div");
-      row.className = "file-row";
-      row.id = id;
-      row.innerHTML = `
-        <span class="fname" title="${name}">${name}</span>
-        ${size ? `<span class="fsize">${(size / 1024 / 1024).toFixed(1)} MB</span>` : ""}
-        <span class="fstatus ${statusClass}" id="status-${id}">${statusText}</span>
-        <button class="del-btn" onclick="deleteTrack('${name}','${id}')" title="Remove">&#10005;</button>
-      `;
-      fileListEl.appendChild(row);
+      isPlaying = false;
+      playAction.classList.remove("playing");
     }
 
-    function updateRowStatus(rowId, text, cls) {
-      const el = document.getElementById("status-" + rowId);
-      if (!el) return;
-      el.textContent = text;
-      el.className = "fstatus " + cls;
-    }
-
-    function enablePlay() { playBtn.disabled = trackList.length === 0; }
-
-    function setStatus(msg, isError = false) {
-      statusMsg.textContent = msg;
-      statusMsg.className = isError ? "error" : "";
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
     }
   </script>
+
 </body>
 </html>
