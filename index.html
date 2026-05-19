@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Library</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: #0e0e0e;
+      color: #e8e8e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #b0f0c0;
+      margin-bottom: 0.4rem;
+    }
+    .subtitle {
+      font-size: 0.75rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      margin-bottom: 3rem;
+    }
+    .container {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    #drop-zone {
+      border: 1px dashed #333;
+      border-radius: 4px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    #drop-zone:hover, #drop-zone.drag-over { border-color: #b0f0c0; background: #161e16; }
+    #drop-zone .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    #drop-zone p { font-size: 0.8rem; color: #666; line-height: 1.7; }
+    #drop-zone p strong { color: #b0f0c0; font-weight: normal; }
+    #file-input { display: none; }
+
+    .btn-row { display: flex; gap: 12px; }
+    button {
+      flex: 1;
+      background: none;
+      border: 1px solid #333;
+      color: #e8e8e0;
+      font-family: inherit;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    button:hover:not(:disabled) { border-color: #b0f0c0; color: #b0f0c0; }
+    button:disabled { opacity: 0.3; cursor: default; }
+    button.accent { border-color: #b0f0c0; color: #b0f0c0; }
+    button.accent:hover:not(:disabled) { background: #161e16; }
+
+    #now-playing {
+      display: none;
+      border: 1px solid #222;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      background: #141414;
+    }
+    #now-playing .label {
+      font-size: 0.65rem; color: #444;
+      letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px;
+    }
+    #track-name {
+      font-size: 0.9rem; color: #b0f0c0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+    }
+    #track-info { font-size: 0.72rem; color: #555; margin-bottom: 12px; }
+    .progress-track { height: 2px; background: #222; border-radius: 2px; overflow: hidden; }
+    #progress-bar { height: 100%; width: 0%; background: #b0f0c0; transition: width 0.4s linear; }
+
+    #file-list { display: flex; flex-direction: column; gap: 6px; }
+    .file-row {
+      display: flex; align-items: center; gap: 10px;
+      border: 1px solid #1e1e1e; border-radius: 2px;
+      padding: 8px 12px; font-size: 0.78rem; background: #111;
+    }
+    .file-row .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #ccc; }
+    .file-row .fsize { color: #444; flex-shrink: 0; }
+    .file-row .fstatus { flex-shrink: 0; font-size: 0.7rem; color: #444; min-width: 60px; text-align: right; }
+    .file-row .fstatus.uploading { color: #b0f0c0; }
+    .file-row .fstatus.done { color: #4a9; }
+    .file-row .fstatus.error { color: #e55; }
+    .del-btn {
+      background: none; border: none; color: #333; cursor: pointer;
+      font-size: 1rem; padding: 2px 4px; flex-shrink: 0;
+      font-family: inherit; transition: color 0.15s;
+    }
+    .del-btn:hover { color: #e55; }
+
+    #empty-hint { text-align: center; font-size: 0.75rem; color: #333; padding: 1rem 0; }
+    #status-msg { font-size: 0.72rem; color: #555; text-align: center; min-height: 1rem; letter-spacing: 0.05em; }
+    #status-msg.error { color: #e55; }
+
+    .info-box {
+      border: 1px solid #1e1e1e;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      background: #111;
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.8;
+    }
+    .info-box a { color: #b0f0c0; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <h1>&#9836; Audio Library</h1>
+  <p class="subtitle">upload &mdash; store &mdash; discover</p>
+
+  <div class="container">
+
+    <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">&#8679;</div>
+      <p><strong>Click to upload</strong> or drag &amp; drop<br>MP3 &bull; WAV &bull; OGG &bull; FLAC &bull; M4A</p>
+      <input type="file" id="file-input" accept="audio/*" multiple />
+    </div>
+
+    <div class="btn-row">
+      <button class="accent" id="play-btn" disabled onclick="playRandomClip()">
+        &#9654; Random 30s clip
+      </button>
+      <button id="stop-btn" disabled onclick="stopClip()">
+        &#9632; Stop
+      </button>
+    </div>
+
+    <div id="now-playing">
+      <div class="label">Now playing</div>
+      <div id="track-name"></div>
+      <div id="track-info"></div>
+      <div class="progress-track"><div id="progress-bar"></div></div>
+    </div>
+
+    <div id="status-msg"></div>
+    <div id="file-list"></div>
+    <div id="empty-hint">No files yet — upload something above.</div>
+
+  </div>
+
+  <script>
+    // ============================================================
+    //  CONFIGURATION — fill these in (see README step by step)
+    // ============================================================
+
+    // Your Cloudflare Worker URL (you'll get this in Part 2 of the README)
+    const WORKER_URL = "https://your-worker.your-subdomain.workers.dev";
+
+    // Your R2 public bucket URL (you'll get this in Part 1 of the README)
+    // Example: "https://pub-abc123.r2.dev"
+    const BUCKET_PUBLIC_URL = "https://pub-XXXXXXXX.r2.dev";
+
+    // ============================================================
+
+    let trackList        = [];
+    let currentAudio     = null;
+    let progressInterval = null;
+
+    const fileInput   = document.getElementById("file-input");
+    const dropZone    = document.getElementById("drop-zone");
+    const playBtn     = document.getElementById("play-btn");
+    const stopBtn     = document.getElementById("stop-btn");
+    const fileListEl  = document.getElementById("file-list");
+    const nowPlaying  = document.getElementById("now-playing");
+    const trackNameEl = document.getElementById("track-name");
+    const trackInfoEl = document.getElementById("track-info");
+    const progressBar = document.getElementById("progress-bar");
+    const emptyHint   = document.getElementById("empty-hint");
+    const statusMsg   = document.getElementById("status-msg");
+
+    // Drag & drop
+    dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+    dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      handleFiles([...e.dataTransfer.files].filter(f => f.type.startsWith("audio/")));
+    });
+    fileInput.addEventListener("change", () => handleFiles([...fileInput.files]));
+
+    function handleFiles(files) { files.forEach(uploadFile); }
+
+    // Upload via Cloudflare Worker
+    async function uploadFile(file) {
+      const rowId = "row-" + Date.now() + Math.random().toString(36).slice(2);
+      addFileRow(rowId, file.name, file.size, "uploading", "uploading…");
+
+      try {
+        const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type || "audio/mpeg" }
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const url = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`;
+        trackList.push({ name: file.name, url });
+        updateRowStatus(rowId, "saved ✓", "done");
+        enablePlay();
+        setStatus("");
+      } catch (e) {
+        updateRowStatus(rowId, "error", "error");
+        setStatus("Upload failed: " + e.message, true);
+      }
+    }
+
+    // Load existing files from Worker
+    async function loadExistingFiles() {
+      setStatus("Loading library…");
+      try {
+        const res  = await fetch(`${WORKER_URL}/list`);
+        if (!res.ok) throw new Error("Could not load files");
+        const data = await res.json();
+        for (const name of data.files) {
+          const url = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
+          trackList.push({ name, url });
+          addFileRow("stored-" + name, name, null, "done", "saved ✓");
+        }
+        enablePlay();
+        setStatus("");
+        if (!data.files.length) emptyHint.style.display = "block";
+      } catch (e) {
+        setStatus("Could not connect — check WORKER_URL in the code.", true);
+      }
+    }
+    loadExistingFiles();
+
+    // Delete via Worker
+    window.deleteTrack = async function(name, rowId) {
+      try {
+        await fetch(`${WORKER_URL}/delete/${encodeURIComponent(name)}`, { method: "DELETE" });
+        trackList = trackList.filter(t => t.name !== name);
+        document.getElementById(rowId)?.remove();
+        enablePlay();
+        if (!fileListEl.children.length) emptyHint.style.display = "block";
+      } catch (e) {
+        setStatus("Delete failed: " + e.message, true);
+      }
+    };
+
+    // Play random 30s clip
+    window.playRandomClip = function() {
+      if (!trackList.length) return;
+      stopClip();
+      const track = trackList[Math.floor(Math.random() * trackList.length)];
+      const audio = new Audio(track.url);
+      audio.crossOrigin = "anonymous";
+      currentAudio = audio;
+
+      audio.addEventListener("loadedmetadata", () => {
+        const duration = audio.duration;
+        const maxStart = Math.max(0, duration - 30);
+        const start    = Math.random() * maxStart;
+        audio.currentTime = start;
+        audio.play();
+
+        const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+        trackNameEl.textContent = track.name;
+        trackInfoEl.textContent = `clip ${fmt(start)} → ${fmt(Math.min(start + 30, duration))}  ·  total ${fmt(duration)}`;
+        nowPlaying.style.display = "block";
+        stopBtn.disabled = false;
+        progressBar.style.width = "0%";
+
+        progressInterval = setInterval(() => {
+          const elapsed = audio.currentTime - start;
+          progressBar.style.width = Math.min(100, (elapsed / 30) * 100) + "%";
+          if (elapsed >= 30) stopClip();
+        }, 300);
+      });
+
+      audio.addEventListener("error", () => setStatus("Could not play track.", true));
+    };
+
+    window.stopClip = function() {
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+      clearInterval(progressInterval);
+      progressBar.style.width = "0%";
+      nowPlaying.style.display = "none";
+      stopBtn.disabled = true;
+    };
+
+    function addFileRow(id, name, size, statusClass, statusText) {
+      emptyHint.style.display = "none";
+      const row = document.createElement("div");
+      row.className = "file-row";
+      row.id = id;
+      row.innerHTML = `
+        <span class="fname" title="${name}">${name}</span>
+        ${size ? `<span class="fsize">${(size / 1024 / 1024).toFixed(1)} MB</span>` : ""}
+        <span class="fstatus ${statusClass}" id="status-${id}">${statusText}</span>
+        <button class="del-btn" onclick="deleteTrack('${name}','${id}')" title="Remove">&#10005;</button>
+      `;
+      fileListEl.appendChild(row);
+    }
+
+    function updateRowStatus(rowId, text, cls) {
+      const el = document.getElementById("status-" + rowId);
+      if (!el) return;
+      el.textContent = text;
+      el.className = "fstatus " + cls;
+    }
+
+    function enablePlay() { playBtn.disabled = trackList.length === 0; }
+
+    function setStatus(msg, isError = false) {
+      statusMsg.textContent = msg;
+      statusMsg.className = isError ? "error" : "";
+    }
+  </script>
+</body>
+</html>
