@@ -122,6 +122,21 @@ html,body{
   background:darkred;
   transform:scale(1.2);
 }
+.bottom-images{
+  width:100%;
+  margin-top:120vh; /* sorgt dafür, dass du erst runter scrollen musst */
+}
+
+.bottom-images img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+body{
+  min-height:200vh; /* nur falls du extra Scroll brauchst */
+}
+  
 
 </style>
 </head>
@@ -132,9 +147,11 @@ html,body{
 <div id="recordBtn"></div>
 
 
-  <!-- FLOATING IMAGES -->
-<img src="images/call1.png" class="floating-img" id="img1" alt="">
-<img src="images/call2.png" class="floating-img" id="img2" alt="">
+<!-- BOTTOM IMAGES -->
+<div class="bottom-images">
+  <img src="images/call1.png" alt="">
+  <img src="images/call2.png" alt="">
+</div>
 
 <!-- TOP -->
 <div class="top">
