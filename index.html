@@ -288,18 +288,22 @@ let isPlaying        = false;
 // --- Load existing files from R2 on page load ---
 async function loadTracks() {
   try {
-    const res  = await fetch(`${WORKER_URL}/list`);
+    const res = await fetch(`${WORKER_URL}/list`);
     if (!res.ok) return;
+
     const data = await res.json();
-    trackList  = data.files.map(name => ({
+
+    trackList = data.files.map(name => ({
       name,
-      url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
+      url: `${BUCKET_PUBLIC_URL}/${name}`
     }));
+
   } catch (e) {
-    // silent — user can still upload
+    console.log("loadTracks error", e);
   }
 }
-loadTracks();
+
+window.addEventListener("load", loadTracks);
 
 // --- FILE UPLOAD (SEND CALL button) ---
 document.getElementById("file-input").addEventListener("change", async function () {
@@ -315,10 +319,18 @@ document.getElementById("file-input").addEventListener("change", async function 
       body: file,
       headers: { "Content-Type": file.type || "audio/mpeg" }
     });
+
     if (!res.ok) throw new Error(await res.text());
-    trackList.push({ name: filename, url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}` });
+
+    trackList.push({
+      name: filename,
+      url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}`
+    });
+
     showToast("Call is out");
+
   } catch (e) {
+    console.log(e);
     showToast("Upload failed");
   }
 });
@@ -336,6 +348,7 @@ recordBtn.addEventListener("click", async () => {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
       mediaRecorder = new MediaRecorder(stream);
       chunks = [];
 
@@ -344,7 +357,7 @@ recordBtn.addEventListener("click", async () => {
       };
 
       mediaRecorder.onstop = async () => {
-        const blob     = new Blob(chunks, { type: "audio/webm" });
+        const blob = new Blob(chunks, { type: "audio/webm" });
         const filename = "recording-" + Date.now() + ".webm";
 
         try {
@@ -353,10 +366,18 @@ recordBtn.addEventListener("click", async () => {
             body: blob,
             headers: { "Content-Type": "audio/webm" }
           });
+
           if (!res.ok) throw new Error(await res.text());
-          trackList.push({ name: filename, url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}` });
+
+          trackList.push({
+            name: filename,
+            url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}`
+          });
+
           showToast("Call is out");
+
         } catch (e) {
+          console.log(e);
           showToast("Upload failed");
         }
 
@@ -368,6 +389,7 @@ recordBtn.addEventListener("click", async () => {
       recordBtn.classList.add("recording");
 
     } catch (e) {
+      console.log(e);
       showToast("Microphone not available");
     }
 
@@ -379,12 +401,17 @@ recordBtn.addEventListener("click", async () => {
 });
 
 // --- PLAY / STOP (CALL BACK button) ---
-function togglePlay() {
-  if (isPlaying) {
-    stopClip();
-  } else {
-    playRandomClip();
+function stopClip() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.src = "";
+    currentAudio = null;
   }
+
+  isPlaying = false;
+  clearInterval(progressInterval);
+
+  document.getElementById("callBackAction").classList.remove("playing");
 }
 
 function playRandomClip() {
@@ -396,53 +423,57 @@ function playRandomClip() {
   stopClip();
 
   const track = trackList[Math.floor(Math.random() * trackList.length)];
+  if (!track) return;
+
   const audio = new Audio(track.url);
-  audio.crossOrigin = "anonymous";
   currentAudio = audio;
+  isPlaying = true;
 
-  audio.addEventListener("loadedmetadata", () => {
-    const duration = audio.duration;
-    const maxStart = Math.max(0, duration - 30);
-    const start    = Math.random() * maxStart;
-    audio.currentTime = start;
-    audio.play();
-
-    isPlaying = true;
-    document.getElementById("callBackAction").classList.add("playing");
-
-    progressInterval = setInterval(() => {
-      if (audio.currentTime - start >= 30) stopClip();
-    }, 500);
-  });
+  document.getElementById("callBackAction").classList.add("playing");
 
   audio.addEventListener("ended", stopClip);
-  audio.addEventListener("error", () => { stopClip(); showToast("Could not play"); });
+
+  audio.addEventListener("error", () => {
+    stopClip();
+    showToast("Could not play");
+  });
+
+  audio.play().catch((err) => {
+    console.log("PLAY FAILED:", err);
+    stopClip();
+    showToast("Playback blocked");
+  });
 }
 
-function stopClip() {
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  clearInterval(progressInterval);
-  isPlaying = false;
-  document.getElementById("callBackAction").classList.remove("playing");
+function togglePlay() {
+  if (isPlaying) stopClip();
+  else playRandomClip();
 }
 
 // --- IMAGE REVEAL on scroll ---
 const imgs = document.querySelectorAll(".bottom-images img");
+
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) entry.target.classList.add("show");
   });
 }, { threshold: 0.2 });
+
 imgs.forEach(img => observer.observe(img));
 
 // --- TOAST ---
 let toastTimeout;
+
 function showToast(msg) {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
   toast.classList.add("show");
+
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
 
 </script>
