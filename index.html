@@ -510,7 +510,7 @@ function showToast(msg) {
 }
 
 // ============================================================
-// IMAGE GALLERY DYNAMIC LOADING
+// IMAGE GALLERY DYNAMIC LOADING (Random order)
 // ============================================================
 const galleryFolder = 'images/gallery/';
 const galleryElement = document.getElementById('gallery');
@@ -523,7 +523,19 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.2 });
 
 // Example: filenames of images to show
-const imageFiles = ['call1.png', 'call2.png', 'call3.jpg']; // add more here
+let imageFiles = ['call1.png', 'call2.png', 'call3.jpg']; // add more here
+
+// Shuffle function
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Shuffle images before displaying
+imageFiles = shuffleArray(imageFiles);
 
 imageFiles.forEach(filename => {
   const img = document.createElement('img');
