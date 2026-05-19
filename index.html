@@ -312,8 +312,10 @@ let currentAudio     = null;
 let progressInterval = null;
 let isPlaying        = false;
 
-let hasPlayed = sessionStorage.getItem("hasPlayed") === "true";
-
+// Always start fresh on page load
+let hasPlayed = false;
+sessionStorage.removeItem("hasPlayed"); // just to be sure
+  
 // ============================================================
 // LOAD TRACKS
 // ============================================================
