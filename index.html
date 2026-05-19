@@ -106,18 +106,23 @@ html,body{
   width:100%;
 }
 
-.bottom-images img{
-  width:100%;
-  height:auto;
-  display:block;
-  transform:translateY(60px);
-  opacity:0;
-  transition:all 1s ease;
+.bottom-images img {
+  width: 100%;
+  height: auto;
+  display: block;
+
+  opacity: 0;
+  transform: translateY(80px);
+  filter: blur(8px);
+
+  transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
+  will-change: transform, opacity, filter;
 }
 
-.bottom-images img.show{
-  transform:translateY(0);
-  opacity:1;
+.bottom-images img.show {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 /* ---------------- BOTTOM BAR ---------------- */
