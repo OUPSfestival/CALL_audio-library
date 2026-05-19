@@ -152,23 +152,39 @@ body{
 
 /* ---------------- RECORD BUTTON ---------------- */
 
-#recordBtn{
-  position:fixed;
-  top:18px;
-  right:18px;
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  background:red;
-  z-index:9999;
-  cursor:pointer;
-  box-shadow:0 0 10px rgba(255,0,0,0.6);
+#recordWrapper {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between dot and text */
+  z-index: 9999;
+}
+
+#recordBtn {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: red;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,0,0,0.6);
   transition: transform 0.2s;
 }
 
-#recordBtn.recording{
-  background:darkred;
-  transform:scale(1.2);
+#recordBtn.recording {
+  background: darkred;
+  transform: scale(1.2);
+}
+
+#recordText {
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  user-select: none;
 }
 
 /* ---------------- TOAST ---------------- */
@@ -222,9 +238,11 @@ body{
 
 <body>
 
-<!-- 🔴 RECORD BUTTON -->
-<div id="recordBtn" title="Click to record"></div>
-
+<!-- 🔴 RECORD BUTTON + TEXT -->
+<div id="recordWrapper">
+  <div id="recordBtn" title="Click to record"></div>
+  <span id="recordText">RECORD NOW</span>
+</div>
   
 
 <!-- TOP MARQUEE -->
