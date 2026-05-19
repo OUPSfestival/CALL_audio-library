@@ -278,10 +278,11 @@ html,body{
 <script>
 
 // ============================================================
-//  CONFIGURATION — your real URLs
+// CONFIG
 // ============================================================
 const WORKER_URL        = "https://audio-api.manuelbischof-phil.workers.dev";
-const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev"; 
+const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
+
 // ============================================================
 
 let trackList        = [];
@@ -289,12 +290,15 @@ let currentAudio     = null;
 let progressInterval = null;
 let isPlaying        = false;
 
-// ✅ ONE PLAY PER PAGE LOAD (session only)
 let hasPlayed = sessionStorage.getItem("hasPlayed") === "true";
 
-// --- Load existing files from R2 on page load ---
+// ============================================================
+// LOAD TRACKS
+// ============================================================
+
 async function loadTracks() {
   try {
+
     const res = await fetch(`${WORKER_URL}/list`);
     if (!res.ok) return;
 
@@ -306,25 +310,33 @@ async function loadTracks() {
     }));
 
   } catch (e) {
-    console.log("loadTracks error", e);
+    console.log(e);
   }
 }
 
 window.addEventListener("load", loadTracks);
 
-// --- FILE UPLOAD (SEND CALL button) ---
+// ============================================================
+// FILE UPLOAD
+// ============================================================
+
 document.getElementById("file-input").addEventListener("change", async function () {
+
   const file = this.files[0];
   if (!file) return;
+
   this.value = "";
 
   const filename = "upload-" + Date.now() + "-" + file.name;
 
   try {
+
     const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`, {
       method: "PUT",
       body: file,
-      headers: { "Content-Type": file.type || "audio/mpeg" }
+      headers: {
+        "Content-Type": file.type || "audio/mpeg"
+      }
     });
 
     if (!res.ok) throw new Error(await res.text());
@@ -340,9 +352,13 @@ document.getElementById("file-input").addEventListener("change", async function 
     console.log(e);
     showToast("Upload failed");
   }
+
 });
 
-// --- RECORDING (red button) ---
+// ============================================================
+// MICROPHONE RECORDING
+// ============================================================
+
 let mediaRecorder;
 let chunks = [];
 let isRecording = false;
@@ -354,9 +370,21 @@ recordBtn.addEventListener("click", async () => {
   if (!isRecording) {
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      mediaRecorder = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+      let options = {};
+
+      if (MediaRecorder.isTypeSupported("audio/webm")) {
+        options.mimeType = "audio/webm";
+      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+        options.mimeType = "audio/mp4";
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+
       chunks = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -364,17 +392,35 @@ recordBtn.addEventListener("click", async () => {
       };
 
       mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
-        const filename = "recording-" + Date.now() + ".webm";
+
+        const mimeType = mediaRecorder.mimeType || "audio/webm";
+
+        const extension =
+          mimeType.includes("mp4") ? "m4a" : "webm";
+
+        const blob = new Blob(chunks, {
+          type: mimeType
+        });
+
+        const filename =
+          `recording-${Date.now()}.${extension}`;
 
         try {
-          const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`, {
-            method: "PUT",
-            body: blob,
-            headers: { "Content-Type": "audio/webm" }
-          });
 
-          if (!res.ok) throw new Error(await res.text());
+          const res = await fetch(
+            `${WORKER_URL}/upload/${encodeURIComponent(filename)}`,
+            {
+              method: "PUT",
+              body: blob,
+              headers: {
+                "Content-Type": mimeType
+              }
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(await res.text());
+          }
 
           trackList.push({
             name: filename,
@@ -389,26 +435,41 @@ recordBtn.addEventListener("click", async () => {
         }
 
         stream.getTracks().forEach(track => track.stop());
+
       };
 
       mediaRecorder.start();
+
       isRecording = true;
+
       recordBtn.classList.add("recording");
 
     } catch (e) {
-      console.log(e);
-      showToast("Microphone not available");
+
+      console.error(e);
+
+      showToast(
+        e.message || "Microphone not available"
+      );
     }
 
   } else {
+
     mediaRecorder.stop();
+
     isRecording = false;
+
     recordBtn.classList.remove("recording");
   }
+
 });
 
-// --- PLAY / STOP (CALL BACK button) ---
+// ============================================================
+// AUDIO PLAYBACK
+// ============================================================
+
 function stopClip() {
+
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.src = "";
@@ -416,19 +477,24 @@ function stopClip() {
   }
 
   isPlaying = false;
+
   clearInterval(progressInterval);
 
-  document.getElementById("callBackAction").classList.remove("playing");
+  document
+    .getElementById("callBackAction")
+    .classList.remove("playing");
 }
 
-// 🔒 LOCK AFTER ONE PLAY
 function lockPlayback() {
+
   hasPlayed = true;
+
   sessionStorage.setItem("hasPlayed", "true");
 
   showToast("we are here not to consume");
 
   const el = document.getElementById("callBackAction");
+
   el.style.opacity = "0.3";
   el.style.pointerEvents = "none";
 }
@@ -447,14 +513,20 @@ function playRandomClip() {
 
   stopClip();
 
-  const track = trackList[Math.floor(Math.random() * trackList.length)];
+  const track =
+    trackList[Math.floor(Math.random() * trackList.length)];
+
   if (!track) return;
 
   const audio = new Audio(track.url);
+
   currentAudio = audio;
+
   isPlaying = true;
 
-  document.getElementById("callBackAction").classList.add("playing");
+  document
+    .getElementById("callBackAction")
+    .classList.add("playing");
 
   audio.addEventListener("ended", () => {
     stopClip();
@@ -466,39 +538,61 @@ function playRandomClip() {
     showToast("Could not play");
   });
 
-  audio.play().catch(() => {
+  audio.play().catch((err) => {
+    console.log(err);
     stopClip();
     showToast("Playback blocked");
   });
 }
 
 function togglePlay() {
+
   if (hasPlayed) {
     showToast("we are here not to consume");
     return;
   }
 
-  if (isPlaying) stopClip();
-  else playRandomClip();
+  if (isPlaying) {
+    stopClip();
+  } else {
+    playRandomClip();
+  }
 }
 
-// --- IMAGE REVEAL on scroll ---
+// ============================================================
+// IMAGE REVEAL
+// ============================================================
+
 const imgs = document.querySelectorAll(".bottom-images img");
 
-const observer = new IntersectionObserver(entries => {
+const observer = new IntersectionObserver((entries) => {
+
   entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add("show");
+
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+
   });
-}, { threshold: 0.2 });
+
+}, {
+  threshold: 0.2
+});
 
 imgs.forEach(img => observer.observe(img));
 
-// --- TOAST ---
+// ============================================================
+// TOAST
+// ============================================================
+
 let toastTimeout;
 
 function showToast(msg) {
+
   const toast = document.getElementById("toast");
+
   toast.textContent = msg;
+
   toast.classList.add("show");
 
   clearTimeout(toastTimeout);
@@ -509,5 +603,5 @@ function showToast(msg) {
 }
 
 </script>
-</body>
+  </body>
 </html>
