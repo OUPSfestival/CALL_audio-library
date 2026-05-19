@@ -208,22 +208,39 @@ a{
     font-size:20px;
   }
 
-  /* bottom bar */
-  .bottom{
-    padding:14px 10px;
-    font-size:8px;
-    letter-spacing:.06em;
-  
-  }
+ .bottom{
+  padding:14px 12px;
+  font-size:10px;
+  letter-spacing:.05em;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:10px;
+}
 
-  .bottom-center{
-    max-width:120px;
-    text-align:center;
-  }
+/* make all items behave consistently */
+.bottom > div{
+  display:flex;
+  flex-direction:column;
+}
 
-  .bottom-right{
-    font-size:8px;
-  }
+/* center stays centered but flexible */
+.bottom-center{
+  max-width:140px;
+  text-align:center;
+}
+
+/* keep year readable */
+.bottom-right{
+  font-size:10px;
+  text-align:right;
+}
+
+/* links slightly stronger for readability */
+.bottom a{
+  font-size:11px;
+  line-height:1.2;
+}
 
   /* floating images slightly smaller */
   .floating-img{
