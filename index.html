@@ -150,6 +150,10 @@ a{
   display:none;
 }
 
+  <!-- FLOATING IMAGES -->
+<img src="images/call1.png" class="floating-img" id="img1" alt="">
+<img src="images/call2.png" class="floating-img" id="img2" alt="">
+
 /* ---------------- MOBILE ---------------- */
 
 @media(max-width:700px){
@@ -180,6 +184,17 @@ a{
     padding:16px 14px;
     font-size:10px;
   }
+}
+  /* ---------------- FLOATING IMAGES ---------------- */
+
+.floating-img{
+  position:fixed;
+  width:100px;
+  max-width:100px;
+  pointer-events:none;
+  z-index:2;
+  opacity:0.9;
+  transition:transform 8s linear;
 }
 
 </style>
@@ -263,7 +278,33 @@ a{
 <input type="file" id="file-input" accept="audio/*" multiple />
 
 <script>
-// (your JS unchanged)
+
+const images = document.querySelectorAll('.floating-img');
+
+images.forEach(img => {
+  moveRandom(img);
+
+  setInterval(() => {
+    moveRandom(img);
+  }, 8000);
+});
+
+function moveRandom(el){
+
+  const maxX = window.innerWidth - 100;
+  const maxY = window.innerHeight - 100;
+
+  const randomX = Math.random() * maxX;
+  const randomY = Math.random() * maxY;
+
+  const randomRotate = Math.random() * 360;
+
+  el.style.transform = `
+    translate(${randomX}px, ${randomY}px)
+    rotate(${randomRotate}deg)
+  `;
+}
+
 </script>
 
 </body>
