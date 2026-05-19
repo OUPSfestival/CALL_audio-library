@@ -22,42 +22,34 @@ html,body{
   background:#f4f1ea;
   color:#111;
   font-family:'Inter',sans-serif;
+  overflow:hidden;
 }
 
-/* ---------------- TOP ---------------- */
+/* ---------------- TOP BAR ---------------- */
 
-.top{
+.topbar{
   position:fixed;
   top:0;
+  left:0;
   width:100%;
-  text-align:center;
-  padding:22px;
-  font-size:11px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  opacity:.7;
-}
+  padding:22px 28px;
 
-/* ---------------- BOTTOM ---------------- */
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 
-.bottom{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  text-align:center;
-  padding:22px;
   font-size:11px;
-  letter-spacing:.08em;
+  letter-spacing:.12em;
   text-transform:uppercase;
 }
 
-.bottom a{
-  color:#111;
-  text-decoration:none;
-  border-bottom:1px solid rgba(0,0,0,.3);
+.topbar-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
 }
 
-/* ---------------- CENTER LAYOUT ---------------- */
+/* ---------------- CENTER ---------------- */
 
 .wrap{
   min-height:100vh;
@@ -70,22 +62,18 @@ html,body{
   padding:120px 20px;
 }
 
-/* ---------------- ACTION BLOCKS ---------------- */
-
 .action{
   cursor:pointer;
   display:flex;
   flex-direction:column;
   gap:14px;
-  transition:.2s ease;
+  transition:.25s ease;
 }
 
 .action:hover{
   transform:translateY(-3px);
   opacity:.7;
 }
-
-/* BIG TYPO */
 
 .title{
   font-size:72px;
@@ -95,8 +83,6 @@ html,body{
   font-weight:600;
 }
 
-/* SMALL LINE */
-
 .sub{
   font-size:12px;
   letter-spacing:.08em;
@@ -104,14 +90,51 @@ html,body{
   opacity:.55;
 }
 
-/* MOBILE */
+/* ---------------- BOTTOM MARQUEE ---------------- */
+
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  overflow:hidden;
+  padding:18px 0;
+  border-top:1px solid rgba(0,0,0,.08);
+}
+
+.marquee{
+  display:inline-block;
+  white-space:nowrap;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+
+  padding-left:100%;
+
+  animation:scroll 28s linear infinite;
+}
+
+@keyframes scroll{
+  0%{
+    transform:translateX(0);
+  }
+  100%{
+    transform:translateX(-100%);
+  }
+}
+
+/* ---------------- FILE ---------------- */
+
+#file-input{
+  display:none;
+}
+
+/* ---------------- MOBILE ---------------- */
 
 @media(max-width:700px){
-
   .title{
     font-size:44px;
   }
-
 }
 
 </style>
@@ -120,39 +143,38 @@ html,body{
 <body>
 
 <!-- TOP -->
-<div class="top">
-  FÜR HALTESTELLENSCHWÄRMEREI
+<div class="topbar">
+
+  <div>MANUEL PHIL. BISCHOF</div>
+
+  <div class="topbar-center">
+    FÜR HALTESTELLENSCHWÄRMEREI
+  </div>
+
+  <div>2026</div>
+
 </div>
 
 <!-- CENTER -->
 <div class="wrap">
 
-  <!-- SEND -->
   <div class="action" onclick="document.getElementById('file-input').click()">
-
     <div class="title">SEND CALL</div>
-
     <div class="sub">hochladen deines rufs</div>
-
   </div>
 
-  <!-- PLAY -->
   <div class="action" id="play-action" onclick="togglePlay()">
-
     <div class="title">CALL BACK</div>
-
     <div class="sub">horche dein echo</div>
-
   </div>
 
 </div>
 
-<!-- BOTTOM -->
+<!-- BOTTOM MARQUEE -->
 <div class="bottom">
-  <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank">
-    MANUEL PHIL. BISCHOF
-  </a>
-  — 2026
+  <div class="marquee">
+    An open audio archive for collective field recordings — each upload becomes part of a drifting sonic memory system — a continuous listening space between voices, places and time —
+  </div>
 </div>
 
 <!-- FILE INPUT -->
@@ -174,7 +196,6 @@ let isPlaying = false;
 let interval;
 
 const fileInput = document.getElementById("file-input");
-const playAction = document.getElementById("play-action");
 
 async function load(){
 
@@ -250,15 +271,12 @@ function play(){
 }
 
 function stop(){
-
   if(currentAudio){
     currentAudio.pause();
     currentAudio = null;
   }
-
   clearInterval(interval);
   isPlaying = false;
-
 }
 
 </script>
