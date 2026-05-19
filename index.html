@@ -338,13 +338,33 @@ const images = document.querySelectorAll('.floating-img');
 
 images.forEach((img, index) => {
 
-  setRandomPosition(img);
+  // START: immer Bildschirmmitte
+  moveToCenter(img);
 
-  setInterval(() => {
+  // dann erst Bewegung starten
+  setTimeout(() => {
     setRandomPosition(img);
-  }, 8000 + (index * 1000));
+
+    setInterval(() => {
+      setRandomPosition(img);
+    }, 8000 + (index * 1000));
+
+  }, 500); // kurzer delay für sauberen Start
 
 });
+
+function moveToCenter(el){
+
+  const size = el.offsetWidth || 100;
+
+  const centerX = (window.innerWidth / 2) - (size / 2);
+  const centerY = (window.innerHeight / 2) - (size / 2);
+
+  el.style.transform = `
+    translate(${centerX}px, ${centerY}px)
+    rotate(0deg)
+  `;
+}
 
 function setRandomPosition(el){
 
@@ -362,10 +382,6 @@ function setRandomPosition(el){
     translate(${randomX}px, ${randomY}px)
     rotate(${randomRotate}deg)
   `;
-}
-
-function togglePlay(){
-  console.log('play');
 }
 
 </script>
