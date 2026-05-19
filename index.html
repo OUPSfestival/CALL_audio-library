@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>Haltestellen schreierei</title>
-
+<title>Haltestellenschwärmerei</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-
 <style>
 
 *{
@@ -25,7 +22,7 @@ html,body{
   overflow-x:hidden;
 }
 
-/* ---------------- TOP ---------------- */
+/* ---------------- TOP MARQUEE ---------------- */
 
 .top{
   position:fixed;
@@ -111,8 +108,6 @@ html,body{
   width:100%;
   height:auto;
   display:block;
-
-  /* reveal animation */
   transform:translateY(60px);
   opacity:0;
   transition:all 1s ease;
@@ -149,6 +144,7 @@ html,body{
   z-index:9999;
   cursor:pointer;
   box-shadow:0 0 10px rgba(255,0,0,0.6);
+  transition: transform 0.2s;
 }
 
 #recordBtn.recording{
@@ -156,15 +152,55 @@ html,body{
   transform:scale(1.2);
 }
 
+/* ---------------- TOAST ---------------- */
+
+#toast{
+  position:fixed;
+  bottom:60px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#111;
+  color:#bfbb99;
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  padding:12px 28px;
+  opacity:0;
+  transition:opacity 0.3s, transform 0.3s;
+  pointer-events:none;
+  white-space:nowrap;
+  z-index:9999;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* ---------------- PLAY STATE ---------------- */
+
+#callBackAction .stop-hint{
+  display:none;
+  font-size:13px;
+  fill:#bfbb99;
+  opacity:0.7;
+}
+
+#callBackAction.playing .arc-big{
+  fill:#bfbb99;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- 🔴 RECORD -->
-<div id="recordBtn"></div>
+<!-- 🔴 RECORD BUTTON -->
+<div id="recordBtn" title="Click to record"></div>
 
-<!-- TOP -->
+<!-- TOP MARQUEE -->
 <div class="top">
   <div class="marquee">
     Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns. Über CALL BACK hörst du ein Echo.
@@ -174,19 +210,17 @@ html,body{
 <!-- CENTER -->
 <div class="wrap">
 
-  <!-- SEND -->
+  <!-- SEND CALL — file upload -->
   <div class="action" onclick="document.getElementById('file-input').click()">
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="sendPath" d="M 20 40 Q 200 240 380 40" />
       </defs>
-
       <text class="arc-big">
         <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
           SEND CALL
         </textPath>
       </text>
-
       <text class="arc-small">
         <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
           Schicke deinen Ruf in die digitalen Täler
@@ -195,22 +229,20 @@ html,body{
     </svg>
   </div>
 
-  <!-- CALL BACK -->
-  <div class="action">
+  <!-- CALL BACK — play random clip -->
+  <div class="action" id="callBackAction" onclick="togglePlay()">
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="backPath" d="M 20 240 Q 200 20 380 240" />
       </defs>
-
       <text class="arc-big">
         <textPath href="#backPath" startOffset="50%" text-anchor="middle">
           CALL BACK
         </textPath>
       </text>
-
       <text class="arc-small">
         <textPath href="#backPath" startOffset="50%" text-anchor="middle">
-          nun Höre dein Echo
+          nun höre dein Echo
         </textPath>
       </text>
     </svg>
@@ -226,80 +258,193 @@ html,body{
   </div>
 </div>
 
-<!-- BOTTOM -->
+<!-- BOTTOM BAR -->
 <div class="bottom">
   <div>MANUEL PHIL. BISCHOF</div>
   <div>FÜR HALTESTELLENSCHREIEREI</div>
   <div>2026</div>
 </div>
 
-<!-- FILE INPUT -->
+<!-- FILE INPUT (hidden) -->
 <input type="file" id="file-input" accept="audio/*">
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script>
 
-/* ---------------- IMAGE REVEAL ---------------- */
+// ============================================================
+//  CONFIGURATION — your real URLs
+// ============================================================
+const WORKER_URL        = "https://audio-api.manuelbischof-phil.workers.dev";
+const BUCKET_PUBLIC_URL = "https://pub-XXXXXXXX.r2.dev"; // ← replace with your real R2 public URL
+// ============================================================
 
-const imgs = document.querySelectorAll(".bottom-images img");
+let trackList        = [];
+let currentAudio     = null;
+let progressInterval = null;
+let isPlaying        = false;
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add("show");
-    }
-  });
-}, { threshold: 0.2 });
+// --- Load existing files from R2 on page load ---
+async function loadTracks() {
+  try {
+    const res  = await fetch(`${WORKER_URL}/list`);
+    if (!res.ok) return;
+    const data = await res.json();
+    trackList  = data.files.map(name => ({
+      name,
+      url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
+    }));
+  } catch (e) {
+    // silent — user can still upload
+  }
+}
+loadTracks();
 
-imgs.forEach(img => observer.observe(img));
+// --- FILE UPLOAD (SEND CALL button) ---
+document.getElementById("file-input").addEventListener("change", async function () {
+  const file = this.files[0];
+  if (!file) return;
+  this.value = "";
 
-/* ---------------- RECORDING ---------------- */
+  const filename = "upload-" + Date.now() + "-" + file.name;
 
+  try {
+    const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": file.type || "audio/mpeg" }
+    });
+    if (!res.ok) throw new Error(await res.text());
+    trackList.push({ name: filename, url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}` });
+    showToast("Call is out");
+  } catch (e) {
+    showToast("Upload failed");
+  }
+});
+
+// --- RECORDING (red button) ---
 let mediaRecorder;
 let chunks = [];
 let isRecording = false;
 
-const btn = document.getElementById("recordBtn");
+const recordBtn = document.getElementById("recordBtn");
 
-btn.addEventListener("click", async () => {
+recordBtn.addEventListener("click", async () => {
 
   if (!isRecording) {
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      chunks = [];
 
-    mediaRecorder = new MediaRecorder(stream);
-    chunks = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
 
-    mediaRecorder.ondataavailable = (e) => {
-      chunks.push(e.data);
-    };
+      mediaRecorder.onstop = async () => {
+        const blob     = new Blob(chunks, { type: "audio/webm" });
+        const filename = "recording-" + Date.now() + ".webm";
 
-    mediaRecorder.onstop = async () => {
+        try {
+          const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(filename)}`, {
+            method: "PUT",
+            body: blob,
+            headers: { "Content-Type": "audio/webm" }
+          });
+          if (!res.ok) throw new Error(await res.text());
+          trackList.push({ name: filename, url: `${BUCKET_PUBLIC_URL}/${encodeURIComponent(filename)}` });
+          showToast("Call is out");
+        } catch (e) {
+          showToast("Upload failed");
+        }
 
-      const blob = new Blob(chunks, { type: "audio/webm" });
+        stream.getTracks().forEach(track => track.stop());
+      };
 
-      const formData = new FormData();
-      formData.append("file", blob, "recording.webm");
+      mediaRecorder.start();
+      isRecording = true;
+      recordBtn.classList.add("recording");
 
-      await fetch("https://audio-api.manuelbischof-phil.workers.dev/", {
-        method: "POST",
-        body: formData
-      });
-
-      stream.getTracks().forEach(track => track.stop());
-    };
-
-    mediaRecorder.start();
-    isRecording = true;
-    btn.classList.add("recording");
+    } catch (e) {
+      showToast("Microphone not available");
+    }
 
   } else {
     mediaRecorder.stop();
     isRecording = false;
-    btn.classList.remove("recording");
+    recordBtn.classList.remove("recording");
   }
 });
 
-</script>
+// --- PLAY / STOP (CALL BACK button) ---
+function togglePlay() {
+  if (isPlaying) {
+    stopClip();
+  } else {
+    playRandomClip();
+  }
+}
 
+function playRandomClip() {
+  if (!trackList.length) {
+    showToast("No calls yet");
+    return;
+  }
+
+  stopClip();
+
+  const track = trackList[Math.floor(Math.random() * trackList.length)];
+  const audio = new Audio(track.url);
+  audio.crossOrigin = "anonymous";
+  currentAudio = audio;
+
+  audio.addEventListener("loadedmetadata", () => {
+    const duration = audio.duration;
+    const maxStart = Math.max(0, duration - 30);
+    const start    = Math.random() * maxStart;
+    audio.currentTime = start;
+    audio.play();
+
+    isPlaying = true;
+    document.getElementById("callBackAction").classList.add("playing");
+
+    progressInterval = setInterval(() => {
+      if (audio.currentTime - start >= 30) stopClip();
+    }, 500);
+  });
+
+  audio.addEventListener("ended", stopClip);
+  audio.addEventListener("error", () => { stopClip(); showToast("Could not play"); });
+}
+
+function stopClip() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  clearInterval(progressInterval);
+  isPlaying = false;
+  document.getElementById("callBackAction").classList.remove("playing");
+}
+
+// --- IMAGE REVEAL on scroll ---
+const imgs = document.querySelectorAll(".bottom-images img");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add("show");
+  });
+}, { threshold: 0.2 });
+imgs.forEach(img => observer.observe(img));
+
+// --- TOAST ---
+let toastTimeout;
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+</script>
 </body>
 </html>
