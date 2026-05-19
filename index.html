@@ -522,29 +522,37 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.2 });
 
-// Example: filenames of images to show
-let imageFiles = ['call1.png', 'call2.png', 'call3.jpg']; // add more here
+// Fetch all images from the gallery folder
+async function loadGalleryImages() {
+  try {
+    const res = await fetch(galleryFolder);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const html = parser.parseFromString(text, "text/html");
+    const links = Array.from(html.querySelectorAll("a"))
+      .map(a => a.getAttribute("href"))
+      .filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name));
 
-// Shuffle function
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    // Shuffle links
+    for (let i = links.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [links[i], links[j]] = [links[j], links[i]];
+    }
+
+    // Append images
+    links.forEach(filename => {
+      const img = document.createElement('img');
+      img.src = galleryFolder + filename;
+      img.alt = filename;
+      galleryElement.appendChild(img);
+      observer.observe(img);
+    });
+ } catch (e) {
+    console.error("Failed to load gallery images:", e);
   }
-  return array;
 }
 
-// Shuffle images before displaying
-imageFiles = shuffleArray(imageFiles);
-
-imageFiles.forEach(filename => {
-  const img = document.createElement('img');
-  img.src = galleryFolder + filename;
-  img.alt = filename;
-  galleryElement.appendChild(img);
-  observer.observe(img);
-});
-
+window.addEventListener("load", loadGalleryImages);
 </script>
-  </body>
+</body>
 </html>
