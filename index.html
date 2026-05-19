@@ -6,9 +6,6 @@
 
 <title>CALL — Haltestellenschwärmerei</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -19,51 +16,49 @@
   box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
   width:100%;
   min-height:100%;
   background:#f3f0ea;
   color:#111;
   font-family:'Inter',sans-serif;
-  overflow-x:hidden;
 }
 
-/* ------------------------------------------------ */
-/* NAVIGATION */
-/* ------------------------------------------------ */
+/* ---------------- NAV ---------------- */
 
 nav{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  z-index:100;
   padding:22px 28px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  z-index:100;
   mix-blend-mode:difference;
 }
 
 nav a,
 nav span{
   color:white;
-  text-decoration:none;
-  font-size:12px;
-  letter-spacing:.04em;
+  font-size:11px;
+  letter-spacing:.08em;
   text-transform:uppercase;
-  font-weight:500;
+  text-decoration:none;
 }
 
-.nav-right{
-  display:flex;
-  gap:28px;
+.nav-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:white;
 }
 
-/* ------------------------------------------------ */
-/* HERO */
-/* ------------------------------------------------ */
+/* ---------------- HERO ---------------- */
 
 .hero{
   width:100%;
@@ -71,58 +66,29 @@ nav span{
   padding:140px 40px 60px;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  justify-content:flex-start;
 }
 
-.hero-top{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:60px;
-  align-items:start;
-}
-
-.massive-title{
-  font-size:clamp(72px, 13vw, 240px);
-  line-height:.88;
-  letter-spacing:-0.08em;
-  font-weight:600;
-  text-transform:uppercase;
-}
+/* ---------------- TEXT ---------------- */
 
 .info-column{
-  padding-top:8px;
+  max-width:720px;
+  margin:0 auto;
+  text-align:center;
 }
 
 .info-column p{
   font-size:14px;
   line-height:1.7;
-  max-width:420px;
-  margin-bottom:28px;
+  opacity:.75;
+  margin-bottom:24px;
 }
 
-.info-meta{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.info-meta span{
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  opacity:.55;
-}
-
-/* ------------------------------------------------ */
-/* INTERACTION AREA */
-/* ------------------------------------------------ */
+/* ---------------- ACTION GRID ---------------- */
 
 .interaction-grid{
+  margin-top:180px;
   width:100%;
-  margin-top:120px;
-  border-top:1px solid rgba(0,0,0,.12);
-  padding-top:40px;
-
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:20px;
@@ -133,15 +99,12 @@ nav span{
   min-height:340px;
   background:white;
   border:1px solid rgba(0,0,0,.08);
-
+  padding:26px;
+  cursor:pointer;
+  transition:.25s ease;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-
-  padding:26px;
-
-  cursor:pointer;
-  transition:.25s ease;
 }
 
 .action:hover{
@@ -150,45 +113,31 @@ nav span{
 
 .action-number{
   font-size:11px;
-  letter-spacing:.08em;
-  opacity:.45;
+  opacity:.4;
   text-transform:uppercase;
-}
-
-.action-main{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
+  letter-spacing:.08em;
 }
 
 .action-title{
-  font-size:48px;
-  line-height:.9;
-  letter-spacing:-0.06em;
+  font-size:44px;
+  line-height:1;
+  letter-spacing:-0.04em;
   text-transform:uppercase;
-  font-weight:600;
 }
 
 .action-sub{
   font-size:13px;
   line-height:1.5;
-  max-width:240px;
-  opacity:.6;
+  opacity:.65;
+  max-width:260px;
 }
 
 .icon-wrap{
   position:absolute;
-  bottom:22px;
-  right:22px;
-  font-size:92px;
-  line-height:1;
-  opacity:.1;
-  transition:.2s ease;
-}
-
-.action:hover .icon-wrap{
-  transform:scale(1.05);
-  opacity:.16;
+  bottom:20px;
+  right:20px;
+  font-size:80px;
+  opacity:.12;
 }
 
 #play-action.playing{
@@ -196,139 +145,67 @@ nav span{
   color:#f3f0ea;
 }
 
-#play-action.playing .icon-wrap{
-  opacity:.4;
-}
+.play-icon{ display:block; }
+.stop-icon{ display:none; }
 
-.play-icon{
-  display:block;
-}
+#play-action.playing .play-icon{ display:none; }
+#play-action.playing .stop-icon{ display:block; }
 
-.stop-icon{
-  display:none;
-}
-
-#play-action.playing .play-icon{
-  display:none;
-}
-
-#play-action.playing .stop-icon{
-  display:block;
-}
-
-/* ------------------------------------------------ */
-/* FOOTER TEXT */
-/* ------------------------------------------------ */
+/* ---------------- BOTTOM ---------------- */
 
 .bottom-strip{
   margin-top:80px;
-  padding-top:18px;
-  border-top:1px solid rgba(0,0,0,.12);
-
   display:flex;
   justify-content:space-between;
-  gap:20px;
   flex-wrap:wrap;
+  gap:12px;
+  border-top:1px solid rgba(0,0,0,.1);
+  padding-top:18px;
 }
 
 .bottom-strip span{
   font-size:11px;
+  opacity:.45;
   text-transform:uppercase;
   letter-spacing:.08em;
-  opacity:.45;
 }
 
-/* ------------------------------------------------ */
-/* TOAST */
-/* ------------------------------------------------ */
+/* ---------------- TOAST ---------------- */
 
 #toast{
   position:fixed;
-  bottom:28px;
+  bottom:30px;
   left:50%;
-  transform:translateX(-50%) translateY(20px);
-
+  transform:translateX(-50%);
   background:#111;
-  color:#fff;
-
+  color:white;
+  padding:12px 22px;
   font-size:11px;
-  text-transform:uppercase;
   letter-spacing:.08em;
-
-  padding:14px 24px;
-
+  text-transform:uppercase;
   opacity:0;
   transition:.3s ease;
-
   pointer-events:none;
-
-  z-index:999;
 }
 
 #toast.show{
   opacity:1;
-  transform:translateX(-50%) translateY(0);
 }
 
-#file-input{
-  display:none;
-}
+/* ---------------- FILE ---------------- */
 
-/* ------------------------------------------------ */
-/* MOBILE */
-/* ------------------------------------------------ */
+#file-input{ display:none; }
 
-@media (max-width:900px){
+/* ---------------- MOBILE ---------------- */
 
-  .hero-top{
-    grid-template-columns:1fr;
-    gap:50px;
-  }
-
+@media(max-width:900px){
   .interaction-grid{
     grid-template-columns:1fr;
   }
 
-  .action{
-    min-height:260px;
-  }
-
-  .action-title{
-    font-size:38px;
-  }
-
-}
-
-@media (max-width:600px){
-
-  nav{
-    padding:18px;
-  }
-
-  .nav-right span:nth-child(2){
-    display:none;
-  }
-
   .hero{
-    padding:110px 18px 40px;
+    padding:120px 20px;
   }
-
-  .massive-title{
-    font-size:64px;
-  }
-
-  .action{
-    padding:22px;
-  }
-
-  .action-title{
-    font-size:30px;
-  }
-
-  .icon-wrap{
-    font-size:72px;
-  }
-
 }
 
 </style>
@@ -342,167 +219,111 @@ nav span{
     Manuel Phil. Bischof
   </a>
 
-  <div class="nav-right">
-    <span>Open Audio Call</span>
-    <span>2026</span>
+  <div class="nav-center">
+    FOR HALTESTELLENSCHWÄRMEREI / FÜR HALTESTELLENSCHWÄRMEREI
   </div>
+
+  <span>2026</span>
 
 </nav>
 
 <section class="hero">
 
-  <div class="hero-top">
+  <div class="info-column">
 
-    <div class="massive-title">
-      CALL<br>
-      FOR<br>
-      HALTESTELLEN<br>
-      SCHWÄRMEREI
-    </div>
+    <p>
+      Upload fragments, voices, field recordings and sonic memories.<br>
+      <br>
+      Lade Fragmente, Stimmen, Field Recordings und Klanggedächtnisse hoch.
+    </p>
 
-    <div class="info-column">
-
-      <p>
-        An open participatory audio archive.
-        Upload fragments, voices, environments,
-        accidental recordings, memories,
-        field recordings and sonic observations.
-      </p>
-
-      <p>
-        Every uploaded file becomes part of
-        a continuously shifting collective sound work.
-      </p>
-
-      <div class="info-meta">
-        <span>Public submission platform</span>
-        <span>Audio fragments only</span>
-        <span>Randomized playback system</span>
-      </div>
-
-    </div>
+    <p>
+      Every contribution becomes part of a collective audio archive.<br>
+      <br>
+      Jeder Beitrag wird Teil eines kollektiven Audioarchivs.
+    </p>
 
   </div>
 
   <div class="interaction-grid">
 
     <!-- UPLOAD -->
+    <div class="action" onclick="document.getElementById('file-input').click()">
 
-    <div
-      class="action"
-      id="upload-action"
-      onclick="document.getElementById('file-input').click()"
-    >
+      <div class="action-number">01 / Upload / Hochladen</div>
 
-      <div class="action-number">
-        01 — Upload
-      </div>
-
-      <div class="action-main">
-
+      <div>
         <div class="action-title">
-          Send<br>
-          Audio
+          Send Call<br>
+          Call Senden
         </div>
 
         <div class="action-sub">
-          Upload a sound fragment to the shared archive.
-          Any audio format supported.
+          Upload an audio fragment.<br>
+          Lade ein Audiofragment hoch.
         </div>
-
       </div>
 
-      <div class="icon-wrap">
-        ⤴
-      </div>
+      <div class="icon-wrap">⤴</div>
 
     </div>
 
     <!-- PLAY -->
+    <div class="action" id="play-action" onclick="togglePlay()">
 
-    <div
-      class="action"
-      id="play-action"
-      onclick="togglePlay()"
-    >
+      <div class="action-number">02 / Listen / Hören</div>
 
-      <div class="action-number">
-        02 — Listen
-      </div>
-
-      <div class="action-main">
-
+      <div>
         <div class="action-title">
-          Random<br>
-          Playback
+          Call Playback<br>
+          Call Wiedergabe
         </div>
 
         <div class="action-sub">
-          Listen to a random 30 second excerpt
-          from the archive.
+          Random playback from archive.<br>
+          Zufällige Wiedergabe aus dem Archiv.
         </div>
-
       </div>
 
-      <div class="icon-wrap play-icon">
-        ▶
-      </div>
-
-      <div class="icon-wrap stop-icon">
-        ■
-      </div>
+      <div class="icon-wrap play-icon">▶</div>
+      <div class="icon-wrap stop-icon">■</div>
 
     </div>
 
   </div>
 
   <div class="bottom-strip">
-    <span>Collective Audio Platform</span>
-    <span>Brussels / Vienna / Everywhere</span>
-    <span>2026</span>
+    <span>Collective Sound Archive</span>
+    <span>Brussels / Everywhere / 2026</span>
+    <span>Open System</span>
   </div>
 
 </section>
 
-<input
-  type="file"
-  id="file-input"
-  accept="audio/*"
-  multiple
-/>
-
+<input type="file" id="file-input" accept="audio/*" multiple />
 <div id="toast"></div>
 
 <script>
 
-// ============================================================
-// CONFIGURATION
-// ============================================================
-
+// CONFIG
 const WORKER_URL =
 "https://audio-api.manuelbischof-phil.workers.dev/";
 
 const BUCKET_PUBLIC_URL =
 "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
 
-// ============================================================
+let trackList = [];
+let currentAudio = null;
+let isPlaying = false;
+let progressInterval;
 
-let trackList        = [];
-let currentAudio     = null;
-let progressInterval = null;
-let isPlaying        = false;
-
-const fileInput  = document.getElementById("file-input");
+const fileInput = document.getElementById("file-input");
 const playAction = document.getElementById("play-action");
 
-// LOAD EXISTING FILES
-
+// LOAD FILES
 async function loadExistingFiles(){
-
   try{
-
     const res = await fetch(`${WORKER_URL}/list`);
-
     if(!res.ok) return;
 
     const data = await res.json();
@@ -511,183 +332,95 @@ async function loadExistingFiles(){
       name,
       url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
     }));
-
   }catch(e){}
-
 }
 
 loadExistingFiles();
 
-// FILE INPUT
-
+// UPLOAD
 fileInput.addEventListener("change", () => {
-
-  const files = [...fileInput.files]
-    .filter(f => f.type.startsWith("audio/"));
-
-  if(!files.length) return;
-
+  const files = [...fileInput.files].filter(f => f.type.startsWith("audio/"));
   files.forEach(uploadFile);
-
   fileInput.value = "";
-
 });
 
-// UPLOAD
-
 async function uploadFile(file){
-
   try{
+    const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`, {
+      method:"PUT",
+      body:file
+    });
 
-    const res = await fetch(
-      `${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,
-      {
-        method:"PUT",
-        body:file,
-        headers:{
-          "Content-Type":file.type || "audio/mpeg"
-        }
-      }
-    );
+    if(!res.ok) throw new Error();
 
-    if(!res.ok){
-      throw new Error(await res.text());
-    }
+    trackList.push({
+      name:file.name,
+      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
+    });
 
-    const url =
-      `${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`;
-
-    if(!trackList.find(t => t.name === file.name)){
-
-      trackList.push({
-        name:file.name,
-        url
-      });
-
-    }
-
-    showToast("Audio Uploaded");
-
+    showToast("Uploaded / Hochgeladen");
   }catch(e){
-
-    showToast("Upload Failed");
-
+    showToast("Upload failed / Fehler");
   }
-
 }
 
-// TOGGLE
-
+// PLAY
 function togglePlay(){
-
-  if(isPlaying){
-    stopClip();
-  }else{
-    playRandomClip();
-  }
-
+  isPlaying ? stop() : play();
 }
 
-// RANDOM PLAY
-
-function playRandomClip(){
+function play(){
 
   if(!trackList.length){
-
-    showToast("No Audio Yet");
-
+    showToast("No audio / Kein Audio");
     return;
   }
 
-  stopClip();
+  stop();
 
-  const track =
-    trackList[Math.floor(Math.random() * trackList.length)];
-
+  const track = trackList[Math.floor(Math.random()*trackList.length)];
   const audio = new Audio(track.url);
-
-  audio.crossOrigin = "anonymous";
-
   currentAudio = audio;
 
   audio.addEventListener("loadedmetadata", () => {
-
     const duration = audio.duration;
-
-    const maxStart = Math.max(0, duration - 30);
-
-    const start = Math.random() * maxStart;
+    const start = Math.random() * Math.max(0, duration - 30);
 
     audio.currentTime = start;
-
     audio.play();
 
     isPlaying = true;
-
     playAction.classList.add("playing");
 
     progressInterval = setInterval(() => {
-
-      if(audio.currentTime - start >= 30){
-        stopClip();
-      }
-
+      if(audio.currentTime - start >= 30) stop();
     }, 500);
-
   });
 
-  audio.addEventListener("ended", stopClip);
-
-  audio.addEventListener("error", () => {
-
-    stopClip();
-
-    showToast("Playback Error");
-
-  });
-
+  audio.addEventListener("ended", stop);
 }
 
-// STOP
-
-function stopClip(){
-
+function stop(){
   if(currentAudio){
-
     currentAudio.pause();
-
     currentAudio = null;
-
   }
 
   clearInterval(progressInterval);
-
   isPlaying = false;
-
   playAction.classList.remove("playing");
-
 }
 
 // TOAST
-
 let toastTimeout;
 
 function showToast(msg){
-
-  const toast = document.getElementById("toast");
-
-  toast.textContent = msg;
-
-  toast.classList.add("show");
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
 
   clearTimeout(toastTimeout);
-
-  toastTimeout = setTimeout(() => {
-
-    toast.classList.remove("show");
-
-  }, 2500);
-
+  toastTimeout = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
 </script>
