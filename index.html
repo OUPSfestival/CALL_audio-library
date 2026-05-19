@@ -42,11 +42,13 @@ html,body{
 .marquee{
   display:inline-block;
   white-space:nowrap;
+
   font-size:20px;
   letter-spacing:.06em;
   text-transform:uppercase;
 
   padding-left:100%;
+
   animation:scroll 110s linear infinite;
   opacity:.8;
 }
@@ -68,7 +70,7 @@ html,body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:90px;
+  gap:80px;
   text-align:center;
   padding:120px 20px;
 }
@@ -78,7 +80,6 @@ html,body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:14px;
   transition:.25s ease;
 }
 
@@ -90,24 +91,24 @@ html,body{
 /* ---------------- ARC TYPO ---------------- */
 
 .arc-text{
-  width:420px;
-  height:180px;
+  width:520px;
+  height:220px;
   display:block;
 }
 
-.arc{
-  font-size:42px;
+.arc-big{
+  font-size:44px;
   letter-spacing:.08em;
   text-transform:uppercase;
   fill:#111;
+  font-weight:600;
 }
 
-/* ---------------- SUB ---------------- */
-
-.sub{
-  font-size:12px;
-  letter-spacing:.08em;
+.arc-small{
+  font-size:14px;
+  letter-spacing:.06em;
   text-transform:uppercase;
+  fill:#111;
   opacity:.55;
 }
 
@@ -146,12 +147,16 @@ html,body{
 
 @media(max-width:700px){
   .arc-text{
-    width:320px;
-    height:140px;
+    width:340px;
+    height:160px;
   }
 
-  .arc{
-    font-size:34px;
+  .arc-big{
+    font-size:32px;
+  }
+
+  .arc-small{
+    font-size:12px;
   }
 }
 
@@ -170,42 +175,58 @@ html,body{
 <!-- CENTER -->
 <div class="wrap">
 
-  <!-- SEND CALL (CONCAVE) -->
+  <!-- SEND CALL (CONVEX) -->
   <div class="action" onclick="document.getElementById('file-input').click()">
 
-    <svg viewBox="0 0 400 200" class="arc-text">
+    <svg viewBox="0 0 400 220" class="arc-text">
+
       <defs>
+        <!-- convex (bowl down) -->
         <path id="sendPath"
-          d="M 20 160 Q 200 20 380 160" />
+          d="M 20 40 Q 200 200 380 40" />
       </defs>
 
-      <text class="arc">
+      <text class="arc-big">
         <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
           SEND CALL
         </textPath>
       </text>
+
+      <text class="arc-small">
+        <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
+          hochladen deines rufs
+        </textPath>
+      </text>
+
     </svg>
 
-    <div class="sub">hochladen deines rufs</div>
   </div>
 
-  <!-- CALL BACK (CONVEX) -->
+  <!-- CALL BACK (CONCAVE) -->
   <div class="action" id="play-action" onclick="togglePlay()">
 
-    <svg viewBox="0 0 400 200" class="arc-text">
+    <svg viewBox="0 0 400 220" class="arc-text">
+
       <defs>
+        <!-- concave (bowl up) -->
         <path id="backPath"
-          d="M 20 40 Q 200 180 380 40" />
+          d="M 20 200 Q 200 20 380 200" />
       </defs>
 
-      <text class="arc">
+      <text class="arc-big">
         <textPath href="#backPath" startOffset="50%" text-anchor="middle">
           CALL BACK
         </textPath>
       </text>
+
+      <text class="arc-small">
+        <textPath href="#backPath" startOffset="50%" text-anchor="middle">
+          horche dein echo
+        </textPath>
+      </text>
+
     </svg>
 
-    <div class="sub">horche dein echo</div>
   </div>
 
 </div>
