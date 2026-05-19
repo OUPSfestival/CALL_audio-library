@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +7,6 @@
 <title>Haltestellen schreierei</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='r' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff4a4a' stop-opacity='1'/%3E%3Cstop offset='40%25' stop-color='%23ff2f2f' stop-opacity='0.95'/%3E%3Cstop offset='75%25' stop-color='%23c81f1f' stop-opacity='0.7'/%3E%3Cstop offset='100%25' stop-color='%23a01414' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='35' fill='url(%23r)'/%3E%3C/svg%3E">
-
 
 <style>
 
@@ -24,7 +21,7 @@
 html, body{
   width:100%;
   height:100%;
-  background:#2e5988;
+  background:#f4f1ea;
   color:#111;
   font-family:'Inter',sans-serif;
   overflow-x:hidden;
@@ -76,7 +73,7 @@ html, body{
   gap:30px;
   text-align:center;
 
-  padding:140px 20px 120px;
+  padding:100px 20px;
 }
 
 /* ---------------- ACTION ---------------- */
@@ -94,7 +91,7 @@ html, body{
   opacity:.75;
 }
 
-/* ---------------- ARC TEXT ---------------- */
+/* ---------------- ARC ---------------- */
 
 .arc-text{
   width:680px;
@@ -119,7 +116,7 @@ html, body{
   opacity:.65;
 }
 
-/* ---------------- BOTTOM BAR ---------------- */
+/* ---------------- BOTTOM ---------------- */
 
 .bottom{
   position:fixed;
@@ -190,12 +187,20 @@ a{
   }
 }
 
+/* ---------------- OPTIONAL DESKTOP TWEAK ---------------- */
+
+@media(min-width:701px){
+  .wrap{
+    transform: translateY(-10px);
+  }
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- TOP MARQUEE -->
+<!-- TOP -->
 <div class="top">
   <div class="marquee">
     An open audio archive for collective field recordings — each upload becomes part of a drifting sonic memory system — a continuous listening space between voices, places and time —
@@ -205,9 +210,7 @@ a{
 <!-- CENTER -->
 <div class="wrap">
 
-  <!-- SEND CALL -->
   <div class="action" onclick="document.getElementById('file-input').click()">
-
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="sendPath" d="M 20 40 Q 200 240 380 40" />
@@ -221,16 +224,13 @@ a{
 
       <text class="arc-small">
         <textPath href="#sendPath" startOffset="50%" text-anchor="middle">
-          Schicke deinen Ruf in die digitalen Wolken.
+          hochladen deines rufs
         </textPath>
       </text>
     </svg>
-
   </div>
 
-  <!-- CALL BACK -->
   <div class="action" id="play-action" onclick="togglePlay()">
-
     <svg viewBox="0 0 400 260" class="arc-text">
       <defs>
         <path id="backPath" d="M 20 240 Q 200 20 380 240" />
@@ -244,16 +244,15 @@ a{
 
       <text class="arc-small">
         <textPath href="#backPath" startOffset="50%" text-anchor="middle">
-          Höre die Rufe
+          horche dein echo
         </textPath>
       </text>
     </svg>
-
   </div>
 
 </div>
 
-<!-- BOTTOM BAR -->
+<!-- BOTTOM -->
 <div class="bottom">
 
   <div>
@@ -274,12 +273,11 @@ a{
 
 </div>
 
-<!-- FILE INPUT -->
 <input type="file" id="file-input" accept="audio/*" multiple />
 
 <script>
 
-/* ---------------- AUDIO SYSTEM ---------------- */
+/* AUDIO LOGIC (unchanged) */
 
 const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev/";
 const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
@@ -302,7 +300,6 @@ async function load(){
       name:n,
       url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(n)}`
     }));
-
   }catch(e){}
 }
 
@@ -330,7 +327,6 @@ function togglePlay(){
 }
 
 function play(){
-
   if(!trackList.length) return;
 
   stop();
@@ -341,7 +337,6 @@ function play(){
   currentAudio = audio;
 
   audio.addEventListener("loadedmetadata", () => {
-
     const start = Math.random() * Math.max(0, audio.duration - 30);
 
     audio.currentTime = start;
@@ -352,7 +347,6 @@ function play(){
     interval = setInterval(() => {
       if(audio.currentTime - start >= 30) stop();
     }, 500);
-
   });
 
   audio.addEventListener("ended", stop);
@@ -367,19 +361,16 @@ function stop(){
   isPlaying = false;
 }
 
-/* ---------------- MARQUEE PAUSE ---------------- */
+/* MARQUEE */
 
 const marquee = document.querySelector(".marquee");
 
 if(marquee){
-
   marquee.addEventListener("mousedown", () => marquee.classList.add("paused"));
   marquee.addEventListener("mouseup", () => marquee.classList.remove("paused"));
   marquee.addEventListener("mouseleave", () => marquee.classList.remove("paused"));
-
-  marquee.addEventListener("touchstart", () => marquee.classList.add("paused"), { passive:true });
+  marquee.addEventListener("touchstart", () => marquee.classList.add("paused"), {passive:true});
   marquee.addEventListener("touchend", () => marquee.classList.remove("paused"));
-
 }
 
 </script>
