@@ -287,6 +287,9 @@ let currentAudio     = null;
 let progressInterval = null;
 let isPlaying        = false;
 
+// ✅ ONE PLAY PER PAGE LOAD (session only)
+let hasPlayed = sessionStorage.getItem("hasPlayed") === "true";
+
 // --- Load existing files from R2 on page load ---
 async function loadTracks() {
   try {
@@ -416,7 +419,25 @@ function stopClip() {
   document.getElementById("callBackAction").classList.remove("playing");
 }
 
+// 🔒 LOCK AFTER ONE PLAY
+function lockPlayback() {
+  hasPlayed = true;
+  sessionStorage.setItem("hasPlayed", "true");
+
+  showToast("we are here not to consume");
+
+  const el = document.getElementById("callBackAction");
+  el.style.opacity = "0.3";
+  el.style.pointerEvents = "none";
+}
+
 function playRandomClip() {
+
+  if (hasPlayed) {
+    showToast("we are here not to consume");
+    return;
+  }
+
   if (!trackList.length) {
     showToast("No calls yet");
     return;
@@ -433,21 +454,28 @@ function playRandomClip() {
 
   document.getElementById("callBackAction").classList.add("playing");
 
-  audio.addEventListener("ended", stopClip);
+  audio.addEventListener("ended", () => {
+    stopClip();
+    lockPlayback();
+  });
 
   audio.addEventListener("error", () => {
     stopClip();
     showToast("Could not play");
   });
 
-  audio.play().catch((err) => {
-    console.log("PLAY FAILED:", err);
+  audio.play().catch(() => {
     stopClip();
     showToast("Playback blocked");
   });
 }
 
 function togglePlay() {
+  if (hasPlayed) {
+    showToast("we are here not to consume");
+    return;
+  }
+
   if (isPlaying) stopClip();
   else playRandomClip();
 }
