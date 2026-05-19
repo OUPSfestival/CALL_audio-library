@@ -28,23 +28,22 @@ html,body{
   overflow:hidden;
 }
 
-/* ---------------- TOP DESCRIPTION ---------------- */
+/* ---------------- TOP IDENTITY (STATIC) ---------------- */
 
 .top{
   position:fixed;
   top:0;
   width:100%;
-  padding:40px 28px 0;
+  padding:22px;
+  text-align:center;
 
-  font-size:14px;
-  letter-spacing:.06em;
+  font-size:11px;
+  letter-spacing:.08em;
   text-transform:uppercase;
-  opacity:.75;
-  cursor:pointer;
-  user-select:none;
+  opacity:.9;
 }
 
-/* ---------------- CENTER ACTIONS ---------------- */
+/* ---------------- CENTER ---------------- */
 
 .wrap{
   min-height:100vh;
@@ -85,22 +84,15 @@ html,body{
   opacity:.55;
 }
 
-/* ---------------- BOTTOM IDENTITY ---------------- */
+/* ---------------- BOTTOM MOVING DESCRIPTION ---------------- */
 
 .bottom{
   position:fixed;
   bottom:0;
   width:100%;
-  padding:22px;
-  text-align:center;
-
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  opacity:.85;
+  padding:18px 0;
+  overflow:hidden;
 }
-
-/* ---------------- MARQUEE ---------------- */
 
 .marquee{
   display:inline-block;
@@ -120,7 +112,6 @@ html,body{
   100%{ transform:translateX(-100%); }
 }
 
-/* paused state */
 .paused{
   animation-play-state:paused !important;
 }
@@ -148,9 +139,9 @@ html,body{
 
 <body>
 
-<!-- TOP DESCRIPTION -->
-<div class="top" id="description">
-  Ein offenes Audio-Archiv für kollektive Feldaufnahmen — jede Spur wird Teil eines sich langsam bewegenden Klangspeichers zwischen Stimmen, Orten und Zeit —
+<!-- TOP (STATIC IDENTITY) -->
+<div class="top">
+  MANUEL PHIL. BISCHOF — FÜR HALTESTELLENSCHWÄRMEREI — 2026
 </div>
 
 <!-- CENTER -->
@@ -168,10 +159,10 @@ html,body{
 
 </div>
 
-<!-- BOTTOM IDENTITY -->
+<!-- BOTTOM (MOVING DESCRIPTION) -->
 <div class="bottom">
   <div class="marquee" id="marquee">
-    MANUEL PHIL. BISCHOF — FÜR HALTESTELLENSCHWÄRMEREI — 2026
+    Ein offenes Audio-Archiv für kollektive Feldaufnahmen — jede Spur wird Teil eines sich langsam bewegenden Klangspeichers zwischen Stimmen, Orten und Zeit —
   </div>
 </div>
 
@@ -193,8 +184,6 @@ let currentAudio = null;
 let isPlaying = false;
 let interval;
 
-const fileInput = document.getElementById("file-input");
-
 async function load(){
   try{
     const res = await fetch(`${WORKER_URL}/list`);
@@ -208,23 +197,6 @@ async function load(){
 }
 
 load();
-
-fileInput.addEventListener("change", () => {
-  [...fileInput.files].forEach(upload);
-  fileInput.value = "";
-});
-
-async function upload(file){
-  await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
-    method:"PUT",
-    body:file
-  });
-
-  trackList.push({
-    name:file.name,
-    url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
-  });
-}
 
 // ---------------- PLAY ----------------
 
@@ -273,7 +245,6 @@ function stop(){
 
 // ---------------- HOLD TO PAUSE DESCRIPTION ----------------
 
-const desc = document.getElementById("description");
 const marquee = document.getElementById("marquee");
 
 function pause(){
@@ -284,12 +255,10 @@ function resume(){
   marquee.classList.remove("paused");
 }
 
-desc.addEventListener("mousedown", pause);
-desc.addEventListener("mouseup", resume);
-desc.addEventListener("mouseleave", resume);
-
-desc.addEventListener("touchstart", pause);
-desc.addEventListener("touchend", resume);
+document.addEventListener("mousedown", pause);
+document.addEventListener("mouseup", resume);
+document.addEventListener("touchstart", pause);
+document.addEventListener("touchend", resume);
 
 </script>
 
