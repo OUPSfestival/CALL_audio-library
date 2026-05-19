@@ -191,7 +191,6 @@ html,body{
 </div>
 
 <script>
-
 let mediaRecorder;
 let chunks = [];
 let isRecording = false;
@@ -200,13 +199,16 @@ const btn = document.getElementById("recordBtn");
 
 btn.addEventListener("click", async () => {
 
+  // START RECORDING
   if (!isRecording) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     mediaRecorder = new MediaRecorder(stream);
     chunks = [];
 
-    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
 
     mediaRecorder.onstop = async () => {
       const blob = new Blob(chunks, { type: "audio/webm" });
@@ -214,25 +216,31 @@ btn.addEventListener("click", async () => {
       const formData = new FormData();
       formData.append("file", blob, "recording.webm");
 
-      await fetch("https://audio-api.manuelbischof-phil.workers.dev/", {
-        method: "POST",
-        body: formData
-      });
+      try {
+        await fetch("https://audio-api.manuelbischof-phil.workers.dev/", {
+          method: "POST",
+          body: formData
+        });
+      } catch (err) {
+        console.error("Upload failed:", err);
+      }
+
+      // stop microphone AFTER upload logic is set
+      stream.getTracks().forEach(track => track.stop());
     };
 
     mediaRecorder.start();
     isRecording = true;
     btn.classList.add("recording");
+  }
 
-  } else {
+  // STOP RECORDING
+  else {
     mediaRecorder.stop();
     isRecording = false;
     btn.classList.remove("recording");
   }
-
 });
-
 </script>
-
 </body>
 </html>
