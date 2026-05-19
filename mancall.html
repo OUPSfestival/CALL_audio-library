@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage My Calls</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+  h1 { text-align: center; }
+  ul { list-style: none; padding: 0; }
+  li { background: #fff; margin: 10px 0; padding: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
+  button { margin-left: 10px; }
+  audio { margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<h1>My Uploaded Calls</h1>
+<ul id="fileList">Loading files...</ul>
+
+<script>
+const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev";
+const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
+
+async function loadFiles() {
+  const ul = document.getElementById("fileList");
+  ul.innerHTML = "Loading files...";
+  
+  try {
+    const res = await fetch(`${WORKER_URL}/list`);
+    if (!res.ok) throw new Error("Could not fetch file list");
+    
+    const data = await res.json();
+    if (!data.files.length) {
+      ul.innerHTML = "<li>No files uploaded yet.</li>";
+      return;
+    }
+
+    ul.innerHTML = "";
+    data.files.forEach(name => {
+      const li = document.createElement("li");
+
+      // audio player
+      const audio = document.createElement("audio");
+      audio.src = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
+      audio.controls = true;
+
+      // filename
+      const span = document.createElement("span");
+      span.textContent = name;
+
+      // download button
+      const downloadBtn = document.createElement("a");
+      downloadBtn.href = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
+      downloadBtn.download = name;
+      downloadBtn.textContent = "Download";
+      downloadBtn.style.marginLeft = "10px";
+
+      // optional delete button (if backend supports)
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.onclick = async () => {
+        if (!confirm(`Delete "${name}"?`)) return;
+        try {
+          const delRes = await fetch(`${WORKER_URL}/delete/${encodeURIComponent(name)}`, { method: "DELETE" });
+          if (delRes.ok) {
+            alert("Deleted " + name);
+            li.remove();
+          } else {
+            alert("Delete failed");
+          }
+        } catch(e) {
+          alert("Error deleting: " + e);
+        }
+      };
+
+      li.appendChild(audio);
+      li.appendChild(span);
+      li.appendChild(downloadBtn);
+      li.appendChild(deleteBtn);
+
+      ul.appendChild(li);
+    });
+
+  } catch(e) {
+    ul.innerHTML = `<li>Error: ${e.message}</li>`;
+  }
+}
+
+// Load on page load
+window.onload = loadFiles;
+</script>
+
+</body>
+</html>
