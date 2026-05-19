@@ -3,24 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage My Calls</title>
+<title>Admin - My Calls</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
-  h1 { text-align: center; }
-  ul { list-style: none; padding: 0; }
-  li { background: #fff; margin: 10px 0; padding: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
-  button { margin-left: 10px; }
-  audio { margin-right: 10px; }
+  body { 
+    font-family: 'Inter', sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    background: #121212; 
+    color: #f4f4f4; 
+  }
+
+  #login-container, #admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  #login-container input {
+    padding: 12px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    width: 80%;
+    max-width: 300px;
+  }
+
+  #login-container button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: none;
+    background: #333;
+    color: #f4f4f4;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  #login-container button:hover { background: #555; }
+
+  h1 { 
+    text-align: center; 
+    font-weight: 800;
+    font-size: 2em; 
+    margin-bottom: 25px; 
+    letter-spacing: 0.05em;
+  }
+
+  ul { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    width: 100%;
+  }
+
+  li { 
+    background: #1e1e1e; 
+    margin: 12px 0; 
+    padding: 15px; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  }
+
+  audio { 
+    width: 100%; 
+    border-radius: 6px;
+  }
+
+  .filename { 
+    word-break: break-word; 
+    font-weight: 500;
+    font-size: 0.95em;
+  }
+
+  .buttons { 
+    display: flex; 
+    justify-content: space-between; 
+    gap: 10px; 
+    flex-wrap: wrap;
+  }
+
+  button, a { 
+    background: #333; 
+    color: #f4f4f4; 
+    border: none; 
+    padding: 10px 14px; 
+    border-radius: 8px; 
+    text-decoration: none; 
+    text-align: center; 
+    flex: 1;
+    min-width: 90px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  button:hover, a:hover { 
+    background: #555; 
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 1.6em; }
+    li { padding: 12px; }
+    button, a { padding: 8px 10px; font-size: 0.9em; }
+    #login-container input { font-size: 0.9em; }
+  }
 </style>
 </head>
 <body>
 
-<h1>My Uploaded Calls</h1>
-<ul id="fileList">Loading files...</ul>
+<!-- LOGIN SCREEN -->
+<div id="login-container">
+  <h1>Admin Login</h1>
+  <input type="password" id="password" placeholder="Enter password">
+  <button onclick="checkPassword()">Login</button>
+  <div id="error-msg" style="color:#f44336;margin-top:10px;"></div>
+</div>
+
+<!-- ADMIN CONTENT -->
+<div id="admin-container" style="display:none;">
+  <h1>Admin - My Calls</h1>
+  <ul id="fileList">Loading files...</ul>
+</div>
 
 <script>
 const WORKER_URL = "https://audio-api.manuelbischof-phil.workers.dev";
 const BUCKET_PUBLIC_URL = "https://pub-f2d160b705314fd1afd1421680f3cb6a.r2.dev";
+
+// Set your password here
+const ADMIN_PASSWORD = "kuh"; //                                                                                          🔒 
+
+function checkPassword() {
+  const input = document.getElementById("password").value;
+  const errorMsg = document.getElementById("error-msg");
+  if (input === ADMIN_PASSWORD) {
+    document.getElementById("login-container").style.display = "none";
+    document.getElementById("admin-container").style.display = "flex";
+    loadFiles();
+  } else {
+    errorMsg.textContent = "Incorrect password!";
+  }
+}
 
 async function loadFiles() {
   const ul = document.getElementById("fileList");
@@ -40,23 +169,22 @@ async function loadFiles() {
     data.files.forEach(name => {
       const li = document.createElement("li");
 
-      // audio player
       const audio = document.createElement("audio");
       audio.src = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
       audio.controls = true;
 
-      // filename
-      const span = document.createElement("span");
+      const span = document.createElement("div");
+      span.className = "filename";
       span.textContent = name;
 
-      // download button
+      const buttonsDiv = document.createElement("div");
+      buttonsDiv.className = "buttons";
+
       const downloadBtn = document.createElement("a");
       downloadBtn.href = `${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`;
       downloadBtn.download = name;
       downloadBtn.textContent = "Download";
-      downloadBtn.style.marginLeft = "10px";
 
-      // optional delete button (if backend supports)
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
       deleteBtn.onclick = async () => {
@@ -74,11 +202,12 @@ async function loadFiles() {
         }
       };
 
+      buttonsDiv.appendChild(downloadBtn);
+      buttonsDiv.appendChild(deleteBtn);
+
       li.appendChild(audio);
       li.appendChild(span);
-      li.appendChild(downloadBtn);
-      li.appendChild(deleteBtn);
-
+      li.appendChild(buttonsDiv);
       ul.appendChild(li);
     });
 
@@ -86,9 +215,6 @@ async function loadFiles() {
     ul.innerHTML = `<li>Error: ${e.message}</li>`;
   }
 }
-
-// Load on page load
-window.onload = loadFiles;
 </script>
 
 </body>
