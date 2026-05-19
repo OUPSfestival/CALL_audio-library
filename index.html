@@ -6,9 +6,10 @@
 
 <title>CALL — Haltestellenschwärmerei</title>
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='red'/%3E%3C/svg%3E">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/svg+xml"
+href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='red'/%3E%3C/svg%3E">
 
 <style>
 
@@ -21,37 +22,29 @@
 html,body{
   width:100%;
   min-height:100%;
-  background:#f4f1ea;
-  color:#111;
+  background:#213722;
+  color:#f4f1ea;
   font-family:'Inter',sans-serif;
   overflow:hidden;
 }
 
-/* ---------------- TOP BAR ---------------- */
+/* ---------------- TOP DESCRIPTION ---------------- */
 
-.topbar{
+.top{
   position:fixed;
   top:0;
-  left:0;
   width:100%;
-  padding:22px 28px;
+  padding:40px 28px 0;
 
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  font-size:11px;
-  letter-spacing:.12em;
+  font-size:14px;
+  letter-spacing:.06em;
   text-transform:uppercase;
+  opacity:.75;
+  cursor:pointer;
+  user-select:none;
 }
 
-.topbar-center{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-}
-
-/* ---------------- CENTER ---------------- */
+/* ---------------- CENTER ACTIONS ---------------- */
 
 .wrap{
   min-height:100vh;
@@ -74,7 +67,7 @@ html,body{
 
 .action:hover{
   transform:translateY(-3px);
-  opacity:.7;
+  opacity:.75;
 }
 
 .title{
@@ -92,39 +85,44 @@ html,body{
   opacity:.55;
 }
 
-/* ---------------- BOTTOM MARQUEE ---------------- */
+/* ---------------- BOTTOM IDENTITY ---------------- */
 
 .bottom{
   position:fixed;
   bottom:0;
-  left:0;
   width:100%;
-  overflow:hidden;
-  padding:18px 0;
-  border-top:1px solid rgba(0,0,0,.08);
+  padding:22px;
+  text-align:center;
+
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.85;
 }
+
+/* ---------------- MARQUEE ---------------- */
 
 .marquee{
   display:inline-block;
   white-space:nowrap;
 
-  font-size:14px;
+  font-size:16px;
   letter-spacing:.06em;
   text-transform:uppercase;
 
   padding-left:100%;
 
-  animation:scroll 60s linear infinite;
-  opacity:.7;
+  animation:scroll 70s linear infinite;
 }
 
 @keyframes scroll{
-  0%{
-    transform:translateX(0);
-  }
-  100%{
-    transform:translateX(-100%);
-  }
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-100%); }
+}
+
+/* paused state */
+.paused{
+  animation-play-state:paused !important;
 }
 
 /* ---------------- FILE ---------------- */
@@ -139,6 +137,10 @@ html,body{
   .title{
     font-size:44px;
   }
+
+  .marquee{
+    font-size:14px;
+  }
 }
 
 </style>
@@ -146,17 +148,9 @@ html,body{
 
 <body>
 
-<!-- TOP -->
-<div class="topbar">
-
-  <div>MANUEL PHIL. BISCHOF</div>
-
-  <div class="topbar-center">
-    FÜR HALTESTELLENSCHWÄRMEREI
-  </div>
-
-  <div>2026</div>
-
+<!-- TOP DESCRIPTION -->
+<div class="top" id="description">
+  Ein offenes Audio-Archiv für kollektive Feldaufnahmen — jede Spur wird Teil eines sich langsam bewegenden Klangspeichers zwischen Stimmen, Orten und Zeit —
 </div>
 
 <!-- CENTER -->
@@ -167,26 +161,26 @@ html,body{
     <div class="sub">hochladen deines rufs</div>
   </div>
 
-  <div class="action" id="play-action" onclick="togglePlay()">
+  <div class="action" onclick="togglePlay()">
     <div class="title">CALL BACK</div>
     <div class="sub">horche dein echo</div>
   </div>
 
 </div>
 
-<!-- BOTTOM MARQUEE -->
+<!-- BOTTOM IDENTITY -->
 <div class="bottom">
-  <div class="marquee">
-    Ein offenes Audio-Archiv für kollektive Feldaufnahmen — jede hochgeladene Spur wird Teil eines sich langsam bewegenden Klangspeichers — ein kontinuierlicher Hörraum zwischen Stimmen, Orten und Zeit —
+  <div class="marquee" id="marquee">
+    MANUEL PHIL. BISCHOF — FÜR HALTESTELLENSCHWÄRMEREI — 2026
   </div>
 </div>
 
-<!-- FILE INPUT -->
+<!-- FILE -->
 <input type="file" id="file-input" accept="audio/*" multiple />
 
 <script>
 
-// ---------------- AUDIO SYSTEM ----------------
+// ---------------- AUDIO ----------------
 
 const WORKER_URL =
 "https://audio-api.manuelbischof-phil.workers.dev/";
@@ -202,21 +196,15 @@ let interval;
 const fileInput = document.getElementById("file-input");
 
 async function load(){
-
   try{
-
     const res = await fetch(`${WORKER_URL}/list`);
-    if(!res.ok) return;
-
     const data = await res.json();
 
     trackList = data.files.map(n => ({
       name:n,
       url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(n)}`
     }));
-
   }catch(e){}
-
 }
 
 load();
@@ -227,7 +215,6 @@ fileInput.addEventListener("change", () => {
 });
 
 async function upload(file){
-
   await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
     method:"PUT",
     body:file
@@ -237,8 +224,9 @@ async function upload(file){
     name:file.name,
     url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
   });
-
 }
+
+// ---------------- PLAY ----------------
 
 function togglePlay(){
   isPlaying ? stop() : play();
@@ -271,7 +259,6 @@ function play(){
   });
 
   audio.addEventListener("ended", stop);
-
 }
 
 function stop(){
@@ -279,9 +266,30 @@ function stop(){
     currentAudio.pause();
     currentAudio = null;
   }
+
   clearInterval(interval);
   isPlaying = false;
 }
+
+// ---------------- HOLD TO PAUSE DESCRIPTION ----------------
+
+const desc = document.getElementById("description");
+const marquee = document.getElementById("marquee");
+
+function pause(){
+  marquee.classList.add("paused");
+}
+
+function resume(){
+  marquee.classList.remove("paused");
+}
+
+desc.addEventListener("mousedown", pause);
+desc.addEventListener("mouseup", resume);
+desc.addEventListener("mouseleave", resume);
+
+desc.addEventListener("touchstart", pause);
+desc.addEventListener("touchend", resume);
 
 </script>
 
