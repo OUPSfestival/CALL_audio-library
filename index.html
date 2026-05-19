@@ -15,13 +15,16 @@
   box-sizing:border-box;
 }
 
-html,body{
-  width:100%;
-  min-height:100%;
-  background:#2e5988;
-  color:#111;
-  font-family:'Inter',sans-serif;
-  overflow-x:hidden;
+.wrap{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:30px;
+  text-align:center;
+
+  padding:140px 20px 60px;
 }
 
 /* ---------------- TOP MARQUEE ---------------- */
@@ -96,7 +99,8 @@ html,body{
 
 .scroll-section{
   width:100%;
-  padding-top:0;
+  padding-top:80px;
+  padding-bottom:80px;
 }
 
 .bottom-images{
@@ -195,6 +199,12 @@ html,body{
 #callBackAction.playing .arc-big{
   fill:#bfbb99;
 }
+  /* global styles at bottom */
+body{
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 
 </style>
 </head>
@@ -203,6 +213,8 @@ html,body{
 
 <!-- 🔴 RECORD BUTTON -->
 <div id="recordBtn" title="Click to record"></div>
+
+  
 
 <!-- TOP MARQUEE -->
 <div class="top">
