@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>CALL — Haltestellenschwärmerei</title>
 
@@ -19,193 +19,120 @@
 html,body{
   width:100%;
   min-height:100%;
-  background:#f3f0ea;
+  background:#f4f1ea;
   color:#111;
   font-family:'Inter',sans-serif;
 }
 
-/* ---------------- NAV ---------------- */
+/* ---------------- TOP ---------------- */
 
-nav{
+.top{
   position:fixed;
   top:0;
-  left:0;
   width:100%;
   padding:22px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:100;
-  mix-blend-mode:difference;
-}
-
-nav a,
-nav span{
-  color:white;
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  text-decoration:none;
-}
-
-.nav-center{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
+  text-align:center;
   font-size:11px;
   letter-spacing:.12em;
   text-transform:uppercase;
-  color:white;
 }
 
-/* ---------------- HERO ---------------- */
+/* ---------------- BOTTOM ---------------- */
 
-.hero{
+.bottom{
+  position:fixed;
+  bottom:0;
   width:100%;
+  padding:22px 28px;
+  display:flex;
+  justify-content:center;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.bottom a{
+  color:#111;
+  text-decoration:none;
+  border-bottom:1px solid rgba(0,0,0,.3);
+}
+
+/* ---------------- GRID ---------------- */
+
+.wrapper{
   min-height:100vh;
-  padding:140px 40px 60px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-}
-
-/* ---------------- TEXT ---------------- */
-
-.info-column{
-  max-width:720px;
-  margin:0 auto;
-  text-align:center;
-}
-
-.info-column p{
-  font-size:14px;
-  line-height:1.7;
-  opacity:.75;
-  margin-bottom:24px;
-}
-
-/* ---------------- ACTION GRID ---------------- */
-
-.interaction-grid{
-  margin-top:180px;
-  width:100%;
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
+  grid-template-columns:repeat(12,1fr);
+  align-items:center;
+  padding:120px 40px;
 }
 
-.action{
-  position:relative;
-  min-height:340px;
-  background:white;
-  border:1px solid rgba(0,0,0,.08);
-  padding:26px;
-  cursor:pointer;
-  transition:.25s ease;
+/* LEFT ACTION */
+
+.left{
+  grid-column:2 / 6;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  gap:10px;
+  cursor:pointer;
 }
 
-.action:hover{
-  transform:translateY(-4px);
+.right{
+  grid-column:8 / 12;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  cursor:pointer;
 }
 
-.action-number{
+.label{
   font-size:11px;
   opacity:.4;
   text-transform:uppercase;
-  letter-spacing:.08em;
+  letter-spacing:.1em;
 }
 
-.action-title{
-  font-size:44px;
+.title{
+  font-size:42px;
   line-height:1;
   letter-spacing:-0.04em;
   text-transform:uppercase;
 }
 
-.action-sub{
-  font-size:13px;
-  line-height:1.5;
-  opacity:.65;
-  max-width:260px;
+.sub{
+  font-size:12px;
+  opacity:.6;
 }
 
-.icon-wrap{
-  position:absolute;
-  bottom:20px;
-  right:20px;
-  font-size:80px;
-  opacity:.12;
+/* hover minimal */
+
+.left:hover,
+.right:hover{
+  opacity:.7;
+  transform:translateY(-2px);
+  transition:.2s ease;
 }
 
-#play-action.playing{
-  background:#111;
-  color:#f3f0ea;
+/* PLAY STATE */
+
+.playing{
+  opacity:.6;
 }
 
-.play-icon{ display:block; }
-.stop-icon{ display:none; }
-
-#play-action.playing .play-icon{ display:none; }
-#play-action.playing .stop-icon{ display:block; }
-
-/* ---------------- BOTTOM ---------------- */
-
-.bottom-strip{
-  margin-top:80px;
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  border-top:1px solid rgba(0,0,0,.1);
-  padding-top:18px;
-}
-
-.bottom-strip span{
-  font-size:11px;
-  opacity:.45;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-}
-
-/* ---------------- TOAST ---------------- */
-
-#toast{
-  position:fixed;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#111;
-  color:white;
-  padding:12px 22px;
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  opacity:0;
-  transition:.3s ease;
-  pointer-events:none;
-}
-
-#toast.show{
-  opacity:1;
-}
-
-/* ---------------- FILE ---------------- */
-
-#file-input{ display:none; }
-
-/* ---------------- MOBILE ---------------- */
+/* MOBILE */
 
 @media(max-width:900px){
-  .interaction-grid{
+
+  .wrapper{
     grid-template-columns:1fr;
+    gap:80px;
+    padding:140px 20px;
   }
 
-  .hero{
-    padding:120px 20px;
+  .left,.right{
+    grid-column:auto;
   }
+
 }
 
 </style>
@@ -213,99 +140,63 @@ nav span{
 
 <body>
 
-<nav>
+<!-- TOP -->
+<div class="top">
+  FÜR HALTESTELLENSCHWÄRMEREI
+</div>
 
+<!-- GRID -->
+<div class="wrapper">
+
+  <!-- UPLOAD -->
+  <div class="left" onclick="document.getElementById('file-input').click()">
+
+    <div class="label">01 / Upload / Hochladen</div>
+
+    <div class="title">
+      Send Call<br>
+      Call Senden
+    </div>
+
+    <div class="sub">
+      Upload audio / Audio hochladen
+    </div>
+
+  </div>
+
+  <!-- PLAY -->
+  <div class="right" id="play-action" onclick="togglePlay()">
+
+    <div class="label">02 / Playback / Wiedergabe</div>
+
+    <div class="title">
+      Call Playback<br>
+      Call Wiedergabe
+    </div>
+
+    <div class="sub">
+      Random playback / Zufällige Wiedergabe
+    </div>
+
+  </div>
+
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom">
   <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank">
-    Manuel Phil. Bischof
+    MANUEL PHIL. BISCHOF
   </a>
+  &nbsp;— 2026
+</div>
 
-  <div class="nav-center">
-    FOR HALTESTELLENSCHWÄRMEREI / FÜR HALTESTELLENSCHWÄRMEREI
-  </div>
-
-  <span>2026</span>
-
-</nav>
-
-<section class="hero">
-
-  <div class="info-column">
-
-    <p>
-      Upload fragments, voices, field recordings and sonic memories.<br>
-      <br>
-      Lade Fragmente, Stimmen, Field Recordings und Klanggedächtnisse hoch.
-    </p>
-
-    <p>
-      Every contribution becomes part of a collective audio archive.<br>
-      <br>
-      Jeder Beitrag wird Teil eines kollektiven Audioarchivs.
-    </p>
-
-  </div>
-
-  <div class="interaction-grid">
-
-    <!-- UPLOAD -->
-    <div class="action" onclick="document.getElementById('file-input').click()">
-
-      <div class="action-number">01 / Upload / Hochladen</div>
-
-      <div>
-        <div class="action-title">
-          Send Call<br>
-          Call Senden
-        </div>
-
-        <div class="action-sub">
-          Upload an audio fragment.<br>
-          Lade ein Audiofragment hoch.
-        </div>
-      </div>
-
-      <div class="icon-wrap">⤴</div>
-
-    </div>
-
-    <!-- PLAY -->
-    <div class="action" id="play-action" onclick="togglePlay()">
-
-      <div class="action-number">02 / Listen / Hören</div>
-
-      <div>
-        <div class="action-title">
-          Call Playback<br>
-          Call Wiedergabe
-        </div>
-
-        <div class="action-sub">
-          Random playback from archive.<br>
-          Zufällige Wiedergabe aus dem Archiv.
-        </div>
-      </div>
-
-      <div class="icon-wrap play-icon">▶</div>
-      <div class="icon-wrap stop-icon">■</div>
-
-    </div>
-
-  </div>
-
-  <div class="bottom-strip">
-    <span>Collective Sound Archive</span>
-    <span>Brussels / Everywhere / 2026</span>
-    <span>Open System</span>
-  </div>
-
-</section>
-
+<!-- FILE -->
 <input type="file" id="file-input" accept="audio/*" multiple />
-<div id="toast"></div>
 
 <script>
 
-// CONFIG
+// ---------------- AUDIO SYSTEM ----------------
+
 const WORKER_URL =
 "https://audio-api.manuelbischof-phil.workers.dev/";
 
@@ -315,66 +206,56 @@ const BUCKET_PUBLIC_URL =
 let trackList = [];
 let currentAudio = null;
 let isPlaying = false;
-let progressInterval;
+let interval;
 
 const fileInput = document.getElementById("file-input");
 const playAction = document.getElementById("play-action");
 
-// LOAD FILES
-async function loadExistingFiles(){
+async function load(){
   try{
     const res = await fetch(`${WORKER_URL}/list`);
     if(!res.ok) return;
 
     const data = await res.json();
 
-    trackList = data.files.map(name => ({
-      name,
-      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(name)}`
+    trackList = data.files.map(n => ({
+      name:n,
+      url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(n)}`
     }));
+
   }catch(e){}
 }
 
-loadExistingFiles();
+load();
 
-// UPLOAD
 fileInput.addEventListener("change", () => {
-  const files = [...fileInput.files].filter(f => f.type.startsWith("audio/"));
-  files.forEach(uploadFile);
+  [...fileInput.files].forEach(upload);
   fileInput.value = "";
 });
 
-async function uploadFile(file){
-  try{
-    const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`, {
-      method:"PUT",
-      body:file
-    });
+async function upload(file){
 
-    if(!res.ok) throw new Error();
+  const res = await fetch(`${WORKER_URL}/upload/${encodeURIComponent(file.name)}`,{
+    method:"PUT",
+    body:file
+  });
 
+  if(res.ok){
     trackList.push({
       name:file.name,
       url:`${BUCKET_PUBLIC_URL}/${encodeURIComponent(file.name)}`
     });
-
-    showToast("Uploaded / Hochgeladen");
-  }catch(e){
-    showToast("Upload failed / Fehler");
   }
+
 }
 
-// PLAY
 function togglePlay(){
   isPlaying ? stop() : play();
 }
 
 function play(){
 
-  if(!trackList.length){
-    showToast("No audio / Kein Audio");
-    return;
-  }
+  if(!trackList.length) return;
 
   stop();
 
@@ -383,8 +264,8 @@ function play(){
   currentAudio = audio;
 
   audio.addEventListener("loadedmetadata", () => {
-    const duration = audio.duration;
-    const start = Math.random() * Math.max(0, duration - 30);
+
+    const start = Math.random() * Math.max(0, audio.duration - 30);
 
     audio.currentTime = start;
     audio.play();
@@ -392,35 +273,27 @@ function play(){
     isPlaying = true;
     playAction.classList.add("playing");
 
-    progressInterval = setInterval(() => {
+    interval = setInterval(() => {
       if(audio.currentTime - start >= 30) stop();
     }, 500);
+
   });
 
   audio.addEventListener("ended", stop);
+
 }
 
 function stop(){
+
   if(currentAudio){
     currentAudio.pause();
     currentAudio = null;
   }
 
-  clearInterval(progressInterval);
+  clearInterval(interval);
   isPlaying = false;
   playAction.classList.remove("playing");
-}
 
-// TOAST
-let toastTimeout;
-
-function showToast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
 </script>
