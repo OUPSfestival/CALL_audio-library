@@ -45,6 +45,7 @@ html,body{
   font-size:20px;
   letter-spacing:.06em;
   text-transform:uppercase;
+
   padding-left:100%;
   animation:scroll 110s linear infinite;
   opacity:.85;
@@ -67,7 +68,7 @@ html,body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:40px; /* 🔥 reduced from 100px */
+  gap:100px;
   text-align:center;
   padding:120px 20px;
 }
@@ -83,11 +84,6 @@ html,body{
 .action:hover{
   transform:translateY(-4px);
   opacity:.75;
-}
-
-/* slight pairing tweak */
-#play-action{
-  transform: translateY(-20px);
 }
 
 /* ---------------- ARC TYPO (BIGGER) ---------------- */
@@ -121,10 +117,13 @@ html,body{
   bottom:0;
   left:0;
   width:100%;
+
   padding:22px 28px;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   font-size:11px;
   letter-spacing:.12em;
   text-transform:uppercase;
@@ -232,22 +231,20 @@ html,body{
 <div class="bottom">
 
   <div>
-    <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank" rel="noopener">
-      MANUEL PHIL. BISCHOF
-    </a>
-  </div>
+  <a href="https://www.instagram.com/manuel.phil.bischof/" target="_blank" rel="noopener">
+    MANUEL PHIL. BISCHOF
+  </a>
+</div>
 
   <div class="bottom-center">
 
     <div>
-      <a href="https://kulturlandsgemeinde.ch/festival/mitwirkende/manuel-philipp-bischof/" target="_blank" rel="noopener">
-        FÜR HALTESTELLENSCHREIEREI
+  <a href="https://kulturlandsgemeinde.ch/festival/mitwirkende/manuel-philipp-bischof/" target="_blank" rel="noopener">
+    FÜR HALTESTELLENSCHREIEREI
       </a>
-    </div>
-
-    <div>2026</div>
-
   </div>
+
+  <div>2026</div>
 
 </div>
 
@@ -352,7 +349,7 @@ function stop(){
   isPlaying = false;
 }
 
-/* ---------------- HOLD TO PAUSE MARQUEE ---------------- */
+/* ---------------- HOLD TO PAUSE MARQUEE (FIXED) ---------------- */
 
 const marquee = document.querySelector(".marquee");
 
