@@ -26,6 +26,8 @@ body{
   overflow-y:auto;
 }
   
+/* ---------------- CENTER ---------------- */
+
 .wrap{
   min-height:100vh;
   display:flex;
@@ -35,38 +37,7 @@ body{
   gap:30px;
   text-align:center;
 
-  padding:140px 20px 60px;
-}
-
-<!-- INFO BOX -->
-<div class="info-box">
-  <p>
-    Gruezi,<br><br>
-
-    Hier kannst du alles teilen, was dir auf der Seele liegt – ob ein Alpsegen
-    oder einfach Gedanken, die ausgesprochen werden müssen.
-
-    Dies ist kein Beichtstuhl, sondern ein Raum, den du dir selbst widmen kannst,
-    und sei lieb mit dir.
-
-    Verletzender Inhalt wird entfernt.
-
-    Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns.
-    Über <strong>CALL BACK</strong> hörst du ein Echo.
-  </p>
-</div>
-
-/* ---------------- CENTER ---------------- */
-
-.wrap{
-  min-height:auto;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:30px;
-  text-align:center;
-  padding:120px 20px;
+  padding:220px 20px 120px;
 }
 
 /* ---------------- ACTION ---------------- */
@@ -233,26 +204,25 @@ body{
   left: 50%;
   transform: translateX(-50%);
 
-  width: min(700px, calc(100vw - 40px));
+  width: min(650px, calc(100vw - 40px));
+  padding: 18px 24px;
 
-  padding: 22px 28px;
+  background: rgba(191,187,153,0.12);
+  border: 1px solid rgba(191,187,153,0.25);
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
 
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 18px;
+  color: #bfbb99;
+  text-align: center;
 
   z-index: 30;
-
-  color: #fff;
-  text-align: center;
 }
 
 .info-box p{
-  font-size: 14px;
-  line-height: 1.7;
-  font-weight: 400;
+  font-size:14px;
+  line-height:1.7;
+  font-weight:400;
 }
 
 </style>
@@ -265,19 +235,28 @@ body{
   <div id="recordBtn" title="Click to record"></div>
   <span id="recordText">RECORD NOW</span>
 </div>
+
+
+  <!-- INFO BOX -->
+<div class="info-box">
+  <p>
+    Gruezi,<br><br>
+
+    Hier kannst du alles teilen, was dir auf der Seele liegt – ob ein Alpsegen
+    oder einfach Gedanken, die ausgesprochen werden müssen.
+
+    Dies ist kein Beichtstuhl, sondern ein Raum, den du dir selbst widmen kannst,
+    und sei lieb mit dir.
+
+    Verletzender Inhalt wird entfernt.
+
+    Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns.
+    Über <strong>CALL BACK</strong> hörst du ein Echo.
+  </p>
+</div>
   
 
-<!-- TOP MARQUEE -->
-<div class="marquee-wrapper">
-  <div class="marquee">
-    <span>
-      Gruezi, Hier kannst du alles teilen, was dir auf der Seele liegt – ob ein Alpsegen oder einfach Gedanken, die ausgesprochen werden müssen. Dies ist kein Beichtstuhl, sondern ein Raum, den du dir selbst widmen kannst, und sei lieb mit dir. Verletzender Inhalt wird entfernt. Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns. Über CALL BACK hörst du ein Echo. ***
-    </span>
-    <span>
-      Gruezi, Hier kannst du alles teilen, was dir auf der Seele liegt – ob ein Alpsegen oder einfach Gedanken, die ausgesprochen werden müssen. Dies ist kein Beichtstuhl, sondern ein Raum, den du dir selbst widmen kannst, und sei lieb mit dir. Verletzender Inhalt wird entfernt. Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns. Über CALL BACK hörst du ein Echo. ***
-    </span>
-  </div>
-</div>
+
 
 <!-- CENTER -->
 <div class="wrap">
