@@ -40,30 +40,34 @@ body{
 
 /* ---------------- TOP MARQUEE ---------------- */
 
-.top{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  padding:48px 0 18px 0;
-  z-index:30;
-  overflow:hidden;
+.marquee-wrapper{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 30;
+  padding: 48px 0 18px;
 }
 
-.marquee {
-  display: flex;
+.marquee{
+  display: inline-block;
   white-space: nowrap;
   font-size: 20px;
-  gap: 50px; /* Abstand zwischen den Kopien */
-  animation: scroll 20s linear infinite;
+
+  /* startet komplett rechts */
+  transform: translateX(100vw);
+
+  animation: travel 15s linear infinite;
 }
 
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
+@keyframes travel{
+  from{
+    transform: translateX(100vw);
   }
-  100% {
-    transform: translateX(-50%);
+  to{
+    /* komplett links hinaus */
+    transform: translateX(-100%);
   }
 }
 
