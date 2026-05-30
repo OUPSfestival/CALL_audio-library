@@ -310,24 +310,46 @@ body{
 #infoPopup{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.45);
+
   display: none;
   align-items: center;
   justify-content: center;
+
   z-index: 10000;
+
+  padding: 60px 24px;
 }
 
-/* POPUP BOX */
+/* TEXT CONTAINER */
 .infoBox{
-  width: min(520px, 85vw);
-  background: #111;
-  color: #bfbb99;
-  padding: 28px;
+  width: min(720px, 92vw);
+
+  color: #e6e2d3;
   font-family: Inter, sans-serif;
-  font-size: 13px;
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-  border-radius: 8px;
+
+  font-size: 16px;
+  line-height: 1.8;
+
+  letter-spacing: 0.01em;
+
+  background: transparent;
+  border: none;
+
+  padding: 0;
+
+  opacity: 0.95;
+}
+
+/* paragraphs spacing = air */
+.infoBox p{
+  margin-bottom: 22px;
+}
+
+/* slightly softer emphasis */
+.infoBox b{
+  font-weight: 600;
+  color: #ffffff;
 }
 
 
