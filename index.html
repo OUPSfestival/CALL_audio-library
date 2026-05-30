@@ -177,6 +177,8 @@ body{
   z-index: 9999;
 }
 
+  
+
 #recordBtn {
   width: 16px;
   height: 16px;
@@ -247,6 +249,56 @@ body{
   scroll-behavior: smooth;
 }
 
+  /* INFO BUTTON */
+#infoBtn{
+  position: fixed;
+  top: 80px;          /* gleiche Höhe wie record */
+  right: 18px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  color: #fff;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  user-select: none;
+  transition: 0.2s ease;
+}
+
+#infoBtn:hover{
+  transform: scale(1.2);
+  opacity: 0.7;
+}
+
+/* POPUP BACKDROP */
+#infoPopup{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+/* POPUP BOX */
+.infoBox{
+  width: min(520px, 85vw);
+  background: #111;
+  color: #bfbb99;
+  padding: 28px;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  border-radius: 8px;
+}
+
 
 </style>
 </head>
@@ -257,6 +309,26 @@ body{
 <div id="recordWrapper">
   <div id="recordBtn" title="Click to record"></div>
   <span id="recordText">RECORD NOW</span>
+</div>
+
+  <!-- INFO BUTTON -->
+<div id="infoBtn">i</div>
+
+<!-- INFO POPUP -->
+<div id="infoPopup">
+  <div class="infoBox">
+    <p>
+      Hier kannst du teilen, was dir schon länger auf der Seele liegt – etwas, das du vielleicht schon lange aussprechen möchtest. Dies ist deine Gelegenheit, es loszuwerden.
+    </p>
+
+    <p>
+      Nimm deinen Ruf auf und teile ihn anonym mit uns.
+    </p>
+
+    <p>
+      Wenn du ein Echo hören möchtest, überrasche dich selbst und klicke auf <b>CALL BACK</b>.
+    </p>
+  </div>
 </div>
   
 
@@ -579,6 +651,18 @@ imageFiles.forEach(filename => {
   img.alt = filename;
   galleryElement.appendChild(img);
   observer.observe(img);
+});
+  const infoBtn = document.getElementById("infoBtn");
+const infoPopup = document.getElementById("infoPopup");
+
+infoBtn.addEventListener("click", () => {
+  infoPopup.style.display = "flex";
+});
+
+infoPopup.addEventListener("click", (e) => {
+  if (e.target === infoPopup) {
+    infoPopup.style.display = "none";
+  }
 });
 </script>
 </body>
