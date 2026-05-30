@@ -38,40 +38,23 @@ body{
   padding:140px 20px 60px;
 }
 
-/* ---------------- TOP MARQUEE ---------------- */
+<!-- INFO BOX -->
+<div class="info-box">
+  <p>
+    Gruezi,<br><br>
 
-.top{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  padding:48px 0 18px 0;
-  z-index:30;
-  overflow:hidden;
-}
+    Hier kannst du alles teilen, was dir auf der Seele liegt – ob ein Alpsegen
+    oder einfach Gedanken, die ausgesprochen werden müssen.
 
-.marquee {
-  display: flex;
-  white-space: nowrap;
-  font-size: 20px;
-  gap: 50px; /* Abstand zwischen den Kopien */
-  animation: scroll 20s linear infinite;
-}
+    Dies ist kein Beichtstuhl, sondern ein Raum, den du dir selbst widmen kannst,
+    und sei lieb mit dir.
 
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
+    Verletzender Inhalt wird entfernt.
 
-.marquee span {
-  flex-shrink: 0;
-}
- 
-
+    Lade deinen Ruf als Sprachnachricht hoch und teile ihn mit uns.
+    Über <strong>CALL BACK</strong> hörst du ein Echo.
+  </p>
+</div>
 
 /* ---------------- CENTER ---------------- */
 
@@ -242,7 +225,35 @@ body{
   overflow-y: auto;
   scroll-behavior: smooth;
 }
+/* INFO BOX */
 
+.info-box{
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(700px, calc(100vw - 40px));
+
+  padding: 22px 28px;
+
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+
+  z-index: 30;
+
+  color: #fff;
+  text-align: center;
+}
+
+.info-box p{
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 400;
+}
 
 </style>
 </head>
